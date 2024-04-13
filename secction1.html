@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paid Video Access</title>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    h1, h2 {
+        margin-bottom: 20px;
+    }
+
+    .error {
+        color: red;
+    }
+
+    #login-error {
+        margin-top: 10px;
+    }
+
+    #video-container {
+        margin-top: 20px;
+    }
+
+    .phone-option {
+        display: block;
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Paid Video Access</h1>
+    <div id="login">
+        <h2>Enter The Code to Watch the Video</h2>
+        <input type="text" id="code" placeholder="Enter Code" required>
+        <button onclick="login()">Check</button>
+        <p id="login-error" class="error"></p>
+    </div>
+    <div id="video-container" style="display: none;">
+        <h2>Video Player</h2>
+        <div id="video-container" class="video-container">
+            <iframe id="video-frame" width="560" height="315" src="https://www.youtube.com/embed/S4UU0VQkiX0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+<script>
+    var codes = [
+        "H7MK4voBnJd7QytFmJ", "", "", "", "",
+    ];
+
+    function login() {
+    var code = document.getElementById("code").value;
+    if (code.trim() === "") {
+        document.getElementById("login-error").textContent = "Password is required!";
+    } else if (codes.includes(code)) {
+        document.getElementById("login-error").textContent = "";
+        document.getElementById("login").style.display = "none";
+        document.getElementById("video-container").style.display = "block";
+    } else {
+        document.getElementById("login-error").textContent = "Incorrect code. Please try again.";
+    }
+}
+
+</script>
+</body>
+</html>
