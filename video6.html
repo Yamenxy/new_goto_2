@@ -153,7 +153,7 @@ input:focus {
                 loginError.textContent = "Code is required!";
             } else {
                 loadingMessage.style.display = "block";
-                fetch('https://script.google.com/macros/s/AKfycbwOZHn9cDO8cDCE5snqP0ZYlO53wM7Rii432nFZ7eOH8nhZHzjM_IwWthbcGHlDcUjy/exec?code=' + code + '&column=5')
+                fetch('https://script.google.com/macros/s/AKfycbykH_8pnh-DRuraCrX2M-WMfVGZrNdhjpjrbfKEVp1CXrS-fzMn_QgyLXD8MsIEvFgh/exec?code=' + code + '&column=5')
                     .then(response => response.json())
                     .then(data => {
                         loadingMessage.style.display = "none";
