@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Ahmed Mohie</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css_2/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="icon" href="images/27aaa2af-994c-4d8a-8221-c5a3674cbb9b-removebg-preview_logo.png" type="image/png">
+  <link href="favicon.ico" rel="shortcut icon">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800" rel="stylesheet">
+  <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="lib/animate-css/animate.min.css" rel="stylesheet">
+</head>
+
+<style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+  
+    .container {
+      flex: 1 0 auto;
+    }
+  
+    .fixed-footer {
+      bottom: 0;
+      width: 100%;
+      background-color: #f8f9fa;
+      padding: 10px 0;
+      text-align: center;
+    }
+  
+    .card {
+      border: none;
+      border-radius: 8px; /* Slightly smaller border radius */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      max-width: 280px; /* Limit the card width */
+      margin: auto; /* Center align the card */
+    }
+  
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+  
+    .card-img-top {
+      border-bottom: 1px solid #ddd;
+    }
+  
+    .card-body {
+      padding: 0.75rem; /* Reduce padding */
+    }
+  
+    .card-title {
+      font-size: 1.5rem; /* Smaller font size */
+      font-weight: bold;
+    }
+  
+    .card-text {
+      color: #555;
+    }
+  
+    .card-link {
+      text-decoration: none;
+    }
+  
+    #pagination {
+      margin-top: 20px;
+    }
+  
+    .pagination-btn {
+      margin: 0 3px; /* Smaller margin */
+      padding: 8px 16px; /* Smaller padding */
+      border-radius: 5px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+  
+    .pagination-btn:hover {
+      background-color: #0056b3;
+    }
+    h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2980b9;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+
+        .interactive-demo {
+            width: 100%;
+            height: 300px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .controls {
+            margin-top: 1rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+  </style>
+  
+
+<body>
+  <header id="header">
+    <div class="container">
+        <nav id="nav-menu-container" class="pull-left">
+            <ul class="nav-menu">
+              <li class="menu-active"><a href="/the_main.html#hero">Home</a></li>
+              <li><a href="/the_main.html#about">About Us</a></li>
+              <li><a href="/the_main.html#team">Team</a></li>
+              <li><a href='https://script.google.com/macros/s/AKfycbz0KJqM_aFLJy9m5-ch4AoH4_eJURvscDchujBEWnZapB1f2PWoUszaDI5syPcrRVnN/exec'>Profile</a></li>
+              <li class="menu-has-children" style="color: white;"><a>Contents</a>
+                <ul>
+                  <li class=""><a href="images.html">White Board picture</a>
+                  </li>
+                  <li><a href="ReflectionandRefraction.html">Reflection and Refraction</a></li>
+
+                  <li class="menu-has-children" style="color: black;"><a>Videos</a>
+                    <ul>
+                      <li><a href="secction.html">Lectures</a></li>
+                      <li><a href="videos.html">Homework Videos</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li><a href="/the_main.html#contact">Our Groups</a></li>
+            </ul>
+          </nav>
+
+      <div id="logo" class="pull-right">
+        <span style="color: white;">الصف الثاني الثانوي</span>
+        <a href="#hero"><img src="images/27aaa2af-994c-4d8a-8221-c5a3674cbb9b-removebg-preview_logo.png" alt="" title="" /></a>
+      </div>
+    </div>
+  </header>
+
+  <body>
+   
+    
+    <main>
+        <section id="reflection">
+            <h2 style="text-align: center;">الانعكاس</h2>
+            <!-- <p>يحدث الانعكاس عندما يرتد الضوء عن سطح ما. عندما يصطدم الضوء بسطح أملس مثل المرآة، فإنه يرتد بنفس الزاوية التي وصل بها. يُعرف هذا المبدأ بقانون الانعكاس: زاوية السقوط تساوي زاوية الانعكاس.</p> -->
+            <canvas class="interactive-demo" id="reflection-demo"></canvas>
+            <div class="controls">
+                <input type="range" id="reflection-angle" min="0" max="90" value="45">
+                <label for="reflection-angle" >زاوية السقوط: <span id="reflection-angle-value">45</span>°</label>
+            </div>
+        </section>
+        
+        <section id="refraction">
+            <h2 style="text-align: center;">الانكسار</h2>
+            <!-- <p>الانكسار هو انحناء الضوء أثناء مروره عبر وسطين مختلفين. عندما ينتقل الضوء من وسط إلى آخر بكثافة مختلفة، فإنه يغير سرعته واتجاهه. هذا الانحناء في الضوء هو ما يجعل الأشياء في الماء تبدو أقرب إلى السطح مما هي عليه فعليًا.</p> -->
+            <canvas class="interactive-demo" id="refraction-demo"></canvas>
+            <div class="controls">
+                <input type="range" id="refraction-angle" min="0" max="90" value="45">
+                <label for="refraction-angle">زاوية السقوط: <span id="refraction-angle-value">45</span>°</label>
+                <select id="medium1-select">
+                    <option value="1.0">الهواء (n = 1.0)</option>
+                    <option value="1.33">الماء (n = 1.33)</option>
+                    <option value="1.5">الزجاج (n = 1.5)</option>
+                    <option value="2.42">الألماس (n = 2.42)</option>
+                </select>
+                <select id="medium2-select">
+                    <option value="1.33">الماء (n = 1.33)</option>
+                    <option value="1.5">الزجاج (n = 1.5)</option>
+                    <option value="2.42">الألماس (n = 2.42)</option>
+                    <option value="1.0">الهواء (n = 1.0)</option>
+                </select>
+            </div>
+        </section>
+    </main>
+    
+    <footer id="footer" class="fixed-footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="credits">
+                <a>Designed by Yamen Yasser</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Reflection demo
+        const reflectionDemo = document.getElementById('reflection-demo');
+        const reflectionCtx = reflectionDemo.getContext('2d');
+        const reflectionAngleSlider = document.getElementById('reflection-angle');
+        const reflectionAngleValue = document.getElementById('reflection-angle-value');
+
+        function drawReflection() {
+    if (!reflectionCtx) {
+        console.error('Reflection canvas context not available');
+        return;
+    }
+
+    const angle = reflectionAngleSlider.value * Math.PI / 180;
+    reflectionCtx.clearRect(0, 0, reflectionDemo.width, reflectionDemo.height);
+
+    // Draw mirror (horizontal line)
+    reflectionCtx.beginPath();
+    reflectionCtx.moveTo(0, reflectionDemo.height / 2);
+    reflectionCtx.lineTo(reflectionDemo.width, reflectionDemo.height / 2);
+    reflectionCtx.strokeStyle = 'black';
+    reflectionCtx.stroke();
+
+    // Calculate intersection point (center of the canvas)
+    const intersectX = reflectionDemo.width / 2;
+    const intersectY = reflectionDemo.height / 2;
+
+    // Draw incident ray (from the top)
+    reflectionCtx.beginPath();
+    reflectionCtx.moveTo(intersectX - Math.cos(angle) * reflectionDemo.width / 2, intersectY - Math.sin(angle) * reflectionDemo.height / 2);
+    reflectionCtx.lineTo(intersectX, intersectY);
+    reflectionCtx.strokeStyle = 'red';
+    reflectionCtx.stroke();
+
+    // Draw reflected ray (on the top)
+    reflectionCtx.beginPath();
+    reflectionCtx.moveTo(intersectX, intersectY);
+    reflectionCtx.lineTo(intersectX + Math.cos(angle) * reflectionDemo.width / 2, intersectY - Math.sin(angle) * reflectionDemo.height / 2);
+    reflectionCtx.strokeStyle = 'blue';
+    reflectionCtx.stroke();
+
+    // Draw angles
+    reflectionCtx.font = '14px Arial';
+    reflectionCtx.fillStyle = 'black';
+    reflectionCtx.fillText(`${reflectionAngleSlider.value}°`, intersectX - 40, intersectY - 10);
+    reflectionCtx.fillText(`${reflectionAngleSlider.value}°`, intersectX + 30, intersectY - 10);
+}
+
+
+
+        reflectionAngleSlider.addEventListener('input', () => {
+            reflectionAngleValue.textContent = reflectionAngleSlider.value;
+            drawReflection();
+        });
+
+        // Refraction demo
+        const refractionDemo = document.getElementById('refraction-demo');
+        const refractionCtx = refractionDemo.getContext('2d');
+        const refractionAngleSlider = document.getElementById('refraction-angle');
+        const refractionAngleValue = document.getElementById('refraction-angle-value');
+        const medium1Select = document.getElementById('medium1-select');
+        const medium2Select = document.getElementById('medium2-select');
+
+        function drawRefraction() {
+    if (!refractionCtx) {
+        console.error('Refraction canvas context not available');
+        return;
+    }
+
+    const angle = refractionAngleSlider.value * Math.PI / 180;
+    const n1 = parseFloat(medium1Select.value);
+    const n2 = parseFloat(medium2Select.value);
+
+    refractionCtx.clearRect(0, 0, refractionDemo.width, refractionDemo.height);
+
+    // Draw medium boundary
+    refractionCtx.beginPath();
+    refractionCtx.moveTo(0, refractionDemo.height / 2);
+    refractionCtx.lineTo(refractionDemo.width, refractionDemo.height / 2);
+    refractionCtx.strokeStyle = 'black';
+    refractionCtx.stroke();
+
+    // Calculate intersection point (center of the canvas)
+    const intersectX = refractionDemo.width / 2;
+    const intersectY = refractionDemo.height / 2;
+
+    // Draw incident ray
+    refractionCtx.beginPath();
+    refractionCtx.moveTo(intersectX - Math.cos(angle) * refractionDemo.width / 2, intersectY - Math.sin(angle) * refractionDemo.height / 2);
+    refractionCtx.lineTo(intersectX, intersectY);
+    refractionCtx.strokeStyle = 'red';
+    refractionCtx.stroke();
+
+    // Calculate refracted angle using Snell's law
+    const refractedAngle = Math.asin((n1 / n2) * Math.sin(angle));
+
+    // Draw refracted ray
+    refractionCtx.beginPath();
+    refractionCtx.moveTo(intersectX, intersectY);
+    refractionCtx.lineTo(intersectX + Math.cos(refractedAngle) * refractionDemo.width / 2, intersectY + Math.sin(refractedAngle) * refractionDemo.height / 2);
+    refractionCtx.strokeStyle = 'blue';
+    refractionCtx.stroke();
+
+    // Draw angles
+    refractionCtx.font = '14px Arial';
+    refractionCtx.fillStyle = 'black';
+    refractionCtx.fillText(`${refractionAngleSlider.value}°`, intersectX + 10, intersectY - 10);
+    refractionCtx.fillText(`${(refractedAngle * 180 / Math.PI).toFixed(1)}°`, intersectX + 10, intersectY + 20);
+
+    // Label media
+    refractionCtx.fillText(`n1 = ${n1}`, 10, intersectY - 10);
+    refractionCtx.fillText(`n2 = ${n2}`, 10, intersectY + 20);
+}
+
+
+        refractionAngleSlider.addEventListener('input', () => {
+            refractionAngleValue.textContent = refractionAngleSlider.value;
+            drawRefraction();
+        });
+
+        medium1Select.addEventListener('change', drawRefraction);
+        medium2Select.addEventListener('change', drawRefraction);
+
+        // Initialize demos
+        function initializeDemos() {
+            reflectionDemo.width = reflectionDemo.offsetWidth;
+            reflectionDemo.height = reflectionDemo.offsetHeight;
+            refractionDemo.width = refractionDemo.offsetWidth;
+            refractionDemo.height = refractionDemo.offsetHeight;
+
+            drawReflection();
+            drawRefraction();
+        }
+
+        // Call initializeDemos after a short delay to ensure proper sizing
+        setTimeout(initializeDemos, 100);
+
+        // Redraw on window resize
+        window.addEventListener('resize', initializeDemos);
+    });
+    </script>
+</body>
+</html>
