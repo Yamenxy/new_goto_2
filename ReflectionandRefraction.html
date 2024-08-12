@@ -201,6 +201,10 @@
             <div class="controls">
                 <input type="range" id="refraction-angle" min="0" max="90" value="45">
                 <label for="refraction-angle">زاوية السقوط: <span id="refraction-angle-value">45</span>°</label>
+<br>
+                <input type="number" id="wavelengthInput" value="550" min="100" max="1000" step="1">
+                <label for="wavelengthInput"> :(nm)ادخل الطول الموجي</label>
+
                 <select id="medium1-select">
                     <option value="1.0">الهواء (n = 1.0)</option>
                     <option value="1.33">الماء (n = 1.33)</option>
@@ -229,7 +233,7 @@
         </div>
       </footer>
 
-   <script>
+    <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Reflection demo
         const reflectionDemo = document.getElementById('reflection-demo');
@@ -300,23 +304,68 @@
         const medium1Select = document.getElementById('medium1-select');
         const medium2Select = document.getElementById('medium2-select');
 
-        function drawRefraction() {
+        function wavelengthToRGB(wavelength) {
+    let r, g, b;
+    if (wavelength >= 380 && wavelength < 440) {
+        r = -(wavelength - 440) / (440 - 380);
+        g = 0.0;
+        b = 1.0;
+    } else if (wavelength >= 440 && wavelength < 490) {
+        r = 0.0;
+        g = (wavelength - 440) / (490 - 440);
+        b = 1.0;
+    } else if (wavelength >= 490 && wavelength < 510) {
+        r = 0.0;
+        g = 1.0;
+        b = -(wavelength - 510) / (510 - 490);
+    } else if (wavelength >= 510 && wavelength < 580) {
+        r = (wavelength - 510) / (580 - 510);
+        g = 1.0;
+        b = 0.0;
+    } else if (wavelength >= 580 && wavelength < 645) {
+        r = 1.0;
+        g = -(wavelength - 645) / (645 - 580);
+        b = 0.0;
+    } else if (wavelength >= 645 && wavelength <= 780) {
+        r = 1.0;
+        g = 0.0;
+        b = 0.0;
+    } else {
+        r = 0.0;
+        g = 0.0;
+        b = 0.0;
+    }
+
+    const factor = 0.7; // Adjust brightness
+    r = Math.round(r * 255 * factor);
+    g = Math.round(g * 255 * factor);
+    b = Math.round(b * 255 * factor);
+
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+
+
+function drawRefraction() {
     try {
         if (!refractionCtx) {
             throw new Error('Refraction canvas context not available');
         }
 
-        const angle = (90 - refractionAngleSlider.value) * Math.PI / 180; // Complement of the slider value
+        const angle = (90 - refractionAngleSlider.value) * Math.PI / 180;
         const n1 = parseFloat(medium1Select.value);
         const n2 = parseFloat(medium2Select.value);
+        const wavelength = parseFloat(document.getElementById('wavelengthInput').value); // Get the wavelength value
 
-        if (isNaN(n1) || isNaN(n2)) {
-            throw new Error('Invalid refractive indices. Please select valid media.');
+        if (isNaN(n1) || isNaN(n2) || isNaN(wavelength)) {
+            throw new Error('Invalid refractive indices or wavelength. Please select valid media and wavelength.');
         }
 
-        if (n1 <= 0 || n2 <= 0) {
-            throw new Error('Refractive indices must be positive values.');
+        if (n1 <= 0 || n2 <= 0 || wavelength <= 0) {
+            throw new Error('Refractive indices and wavelength must be positive values.');
         }
+
+        const incidentRayColor = wavelengthToRGB(wavelength); // Color for the incident ray
 
         refractionCtx.clearRect(0, 0, refractionDemo.width, refractionDemo.height);
 
@@ -338,37 +387,49 @@
         refractionCtx.strokeStyle = 'green';
         refractionCtx.stroke();
 
-        // Draw incident ray
+        // Draw incident ray with the color based on the wavelength
         refractionCtx.beginPath();
         refractionCtx.moveTo(intersectX - Math.sin(angle) * refractionDemo.width / 2, intersectY - Math.cos(angle) * refractionDemo.height / 2);
         refractionCtx.lineTo(intersectX, intersectY);
-        refractionCtx.strokeStyle = 'red';
+        refractionCtx.strokeStyle = incidentRayColor; // Use the color here
         refractionCtx.stroke();
 
-        // Special case when the angle is 90 degrees
-       // Special case when the angle is 90 degrees (horizontal ray)
-if (Math.abs(refractionAngleSlider.value  ) < 0.001) {
-    // Continue the incident ray in a straight line (no refraction)
-    refractionCtx.beginPath();
-    refractionCtx.moveTo(intersectX, intersectY);
-    refractionCtx.lineTo(intersectX + refractionDemo.width / 2, intersectY);
-    refractionCtx.strokeStyle = 'blue';
-    refractionCtx.stroke();
+        // Constants
+        const c = 299792458; // Speed of light in vacuum (m/s)
 
-    // Draw angle
-    refractionCtx.fillText('90°', intersectX + 10, intersectY - 10);
+        // Calculate speeds and wavelengths
+        const v1 = (c / n1 / 1000000).toFixed(2); // Speed in medium 1 (Mm/s)
+        const v2 = (c / n2 / 1000000).toFixed(2); // Speed in medium 2 (Mm/s)
+        const lambda1 = (wavelength / n1).toFixed(2); // Wavelength in medium 1 (nm)
+        const lambda2 = (wavelength / n2).toFixed(2); // Wavelength in medium 2 (nm)
 
-    // Label media
-    refractionCtx.font = '14px Arial';
-    refractionCtx.fillStyle = 'black';
-    refractionCtx.fillText(`n1 = ${n1}`, 10, intersectY - 10);
-    refractionCtx.fillText(`n2 = ${n2}`, 10, intersectY + 20);
+        // Special case when the angle is 90 degrees (horizontal ray)
+        if (Math.abs(refractionAngleSlider.value) < 0.001) {
+            // Continue the incident ray in a straight line (no refraction)
+            refractionCtx.beginPath();
+            refractionCtx.moveTo(intersectX, intersectY);
+            refractionCtx.lineTo(intersectX + refractionDemo.width / 2, intersectY);
+            refractionCtx.strokeStyle = 'blue';
+            refractionCtx.stroke();
 
-    return; // Skip the rest of the refraction logic
-}
+            // Draw angle
+            refractionCtx.fillText('90°', intersectX + 10, intersectY - 10);
+
+            // Label media, light speed, and wavelength
+            refractionCtx.font = '11px Arial';
+            refractionCtx.fillStyle = 'black';
+            refractionCtx.fillText(`n1 = ${n1}, v1 = ${v1} Mm/s, λ1 = ${lambda1} nm`, 10, intersectY - 25);
+            refractionCtx.fillText(`n2 = ${n2}, v2 = ${v2} Mm/s, λ2 = ${lambda2} nm`, 10, intersectY + 35);
+
+            return; // Skip the rest of the refraction logic
+        }
 
         // Calculate refracted angle using Snell's law
         let refractedAngle = Math.asin((n1 / n2) * Math.sin(angle));
+
+        // Convert refracted wavelength to color
+        const refractedWavelength = wavelength / n2; // Wavelength in medium 2
+        const refractedRayColor = wavelengthToRGB(refractedWavelength);
 
         if (isNaN(refractedAngle)) {
             // Total internal reflection occurs
@@ -386,11 +447,11 @@ if (Math.abs(refractionAngleSlider.value  ) < 0.001) {
             refractionCtx.fillText(`${90 - (refractionAngleSlider.value)}°`, intersectX + 10, intersectY - 10);
             refractionCtx.fillText(`${90 - (refractionAngleSlider.value)}°`, intersectX + 10, intersectY - 40);
         } else {
-            // Draw refracted ray
+            // Draw refracted ray with the color based on the refracted wavelength
             refractionCtx.beginPath();
             refractionCtx.moveTo(intersectX, intersectY);
             refractionCtx.lineTo(intersectX + Math.sin(refractedAngle) * refractionDemo.width / 2, intersectY + Math.cos(refractedAngle) * refractionDemo.height / 2);
-            refractionCtx.strokeStyle = 'blue';
+            refractionCtx.strokeStyle = refractedRayColor; // Use the refracted color here
             refractionCtx.stroke();
 
             // Draw angles
@@ -398,15 +459,19 @@ if (Math.abs(refractionAngleSlider.value  ) < 0.001) {
             refractionCtx.fillText(`${90 - ((90 - refractedAngle * 180 / Math.PI).toFixed(1))}°`, intersectX + 10, intersectY + 20);
         }
 
-        // Label media
-        refractionCtx.font = '14px Arial';
+        // Label media, light speed, and wavelength
+        refractionCtx.font = '11px Arial';
         refractionCtx.fillStyle = 'black';
-        refractionCtx.fillText(`n1 = ${n1}`, 10, intersectY - 10);
-        refractionCtx.fillText(`n2 = ${n2}`, 10, intersectY + 20);
+        refractionCtx.fillText(`n1 = ${n1}, v1 = ${v1} Mm/s, λ1 = ${lambda1} nm`, 10, intersectY - 25);
+        refractionCtx.fillText(`n2 = ${n2}, v2 = ${v2} Mm/s, λ2 = ${lambda2} nm`, 10, intersectY + 35);
+
     } catch (error) {
         console.error(error.message);
     }
 }
+
+
+
 
 
 
