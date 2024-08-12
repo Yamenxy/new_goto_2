@@ -229,7 +229,7 @@
         </div>
       </footer>
 
-    <script>
+   <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Reflection demo
         const reflectionDemo = document.getElementById('reflection-demo');
@@ -243,7 +243,7 @@
         return;
     }
 
-    const angle = reflectionAngleSlider.value * Math.PI / 180;
+    const angle = (90 - reflectionAngleSlider.value) * Math.PI / 180; // Complement of the slider value
     reflectionCtx.clearRect(0, 0, reflectionDemo.width, reflectionDemo.height);
 
     // Draw mirror (horizontal line)
@@ -257,9 +257,16 @@
     const intersectX = reflectionDemo.width / 2;
     const intersectY = reflectionDemo.height / 2;
 
+    // Draw normal (vertical line)
+    reflectionCtx.beginPath();
+    reflectionCtx.moveTo(intersectX, intersectY - 50);
+    reflectionCtx.lineTo(intersectX, intersectY + 50);
+    reflectionCtx.strokeStyle = 'green';
+    reflectionCtx.stroke();
+
     // Draw incident ray (from the top)
     reflectionCtx.beginPath();
-    reflectionCtx.moveTo(intersectX - Math.cos(angle) * reflectionDemo.width / 2, intersectY - Math.sin(angle) * reflectionDemo.height / 2);
+    reflectionCtx.moveTo(intersectX - Math.sin(angle) * reflectionDemo.width / 2, intersectY - Math.cos(angle) * reflectionDemo.height / 2);
     reflectionCtx.lineTo(intersectX, intersectY);
     reflectionCtx.strokeStyle = 'red';
     reflectionCtx.stroke();
@@ -267,21 +274,21 @@
     // Draw reflected ray (on the top)
     reflectionCtx.beginPath();
     reflectionCtx.moveTo(intersectX, intersectY);
-    reflectionCtx.lineTo(intersectX + Math.cos(angle) * reflectionDemo.width / 2, intersectY - Math.sin(angle) * reflectionDemo.height / 2);
+    reflectionCtx.lineTo(intersectX + Math.sin(angle) * reflectionDemo.width / 2, intersectY - Math.cos(angle) * reflectionDemo.height / 2);
     reflectionCtx.strokeStyle = 'blue';
     reflectionCtx.stroke();
 
     // Draw angles
     reflectionCtx.font = '14px Arial';
     reflectionCtx.fillStyle = 'black';
-    reflectionCtx.fillText(`${reflectionAngleSlider.value}°`, intersectX - 40, intersectY - 10);
-    reflectionCtx.fillText(`${reflectionAngleSlider.value}°`, intersectX + 30, intersectY - 10);
+    reflectionCtx.fillText(`${90 - (reflectionAngleSlider.value) }°`, intersectX - 40, intersectY - 10);
+    reflectionCtx.fillText(`${90 - (reflectionAngleSlider.value)}°`, intersectX + 30, intersectY - 10);
 }
 
 
 
         reflectionAngleSlider.addEventListener('input', () => {
-            reflectionAngleValue.textContent = reflectionAngleSlider.value;
+            reflectionAngleValue.textContent = 90 -reflectionAngleSlider.value;
             drawReflection();
         });
 
@@ -294,59 +301,118 @@
         const medium2Select = document.getElementById('medium2-select');
 
         function drawRefraction() {
-    if (!refractionCtx) {
-        console.error('Refraction canvas context not available');
-        return;
-    }
+    try {
+        if (!refractionCtx) {
+            throw new Error('Refraction canvas context not available');
+        }
 
-    const angle = refractionAngleSlider.value * Math.PI / 180;
-    const n1 = parseFloat(medium1Select.value);
-    const n2 = parseFloat(medium2Select.value);
+        const angle = (90 - refractionAngleSlider.value) * Math.PI / 180; // Complement of the slider value
+        const n1 = parseFloat(medium1Select.value);
+        const n2 = parseFloat(medium2Select.value);
 
-    refractionCtx.clearRect(0, 0, refractionDemo.width, refractionDemo.height);
+        if (isNaN(n1) || isNaN(n2)) {
+            throw new Error('Invalid refractive indices. Please select valid media.');
+        }
 
-    // Draw medium boundary
-    refractionCtx.beginPath();
-    refractionCtx.moveTo(0, refractionDemo.height / 2);
-    refractionCtx.lineTo(refractionDemo.width, refractionDemo.height / 2);
-    refractionCtx.strokeStyle = 'black';
-    refractionCtx.stroke();
+        if (n1 <= 0 || n2 <= 0) {
+            throw new Error('Refractive indices must be positive values.');
+        }
 
-    // Calculate intersection point (center of the canvas)
-    const intersectX = refractionDemo.width / 2;
-    const intersectY = refractionDemo.height / 2;
+        refractionCtx.clearRect(0, 0, refractionDemo.width, refractionDemo.height);
 
-    // Draw incident ray
-    refractionCtx.beginPath();
-    refractionCtx.moveTo(intersectX - Math.cos(angle) * refractionDemo.width / 2, intersectY - Math.sin(angle) * refractionDemo.height / 2);
-    refractionCtx.lineTo(intersectX, intersectY);
-    refractionCtx.strokeStyle = 'red';
-    refractionCtx.stroke();
+        // Draw medium boundary
+        refractionCtx.beginPath();
+        refractionCtx.moveTo(0, refractionDemo.height / 2);
+        refractionCtx.lineTo(refractionDemo.width, refractionDemo.height / 2);
+        refractionCtx.strokeStyle = 'black';
+        refractionCtx.stroke();
 
-    // Calculate refracted angle using Snell's law
-    const refractedAngle = Math.asin((n1 / n2) * Math.sin(angle));
+        // Calculate intersection point (center of the canvas)
+        const intersectX = refractionDemo.width / 2;
+        const intersectY = refractionDemo.height / 2;
 
-    // Draw refracted ray
+        // Draw normal (vertical line)
+        refractionCtx.beginPath();
+        refractionCtx.moveTo(intersectX, intersectY - 50);
+        refractionCtx.lineTo(intersectX, intersectY + 50);
+        refractionCtx.strokeStyle = 'green';
+        refractionCtx.stroke();
+
+        // Draw incident ray
+        refractionCtx.beginPath();
+        refractionCtx.moveTo(intersectX - Math.sin(angle) * refractionDemo.width / 2, intersectY - Math.cos(angle) * refractionDemo.height / 2);
+        refractionCtx.lineTo(intersectX, intersectY);
+        refractionCtx.strokeStyle = 'red';
+        refractionCtx.stroke();
+
+        // Special case when the angle is 90 degrees
+       // Special case when the angle is 90 degrees (horizontal ray)
+if (Math.abs(refractionAngleSlider.value  ) < 0.001) {
+    // Continue the incident ray in a straight line (no refraction)
     refractionCtx.beginPath();
     refractionCtx.moveTo(intersectX, intersectY);
-    refractionCtx.lineTo(intersectX + Math.cos(refractedAngle) * refractionDemo.width / 2, intersectY + Math.sin(refractedAngle) * refractionDemo.height / 2);
+    refractionCtx.lineTo(intersectX + refractionDemo.width / 2, intersectY);
     refractionCtx.strokeStyle = 'blue';
     refractionCtx.stroke();
 
-    // Draw angles
-    refractionCtx.font = '14px Arial';
-    refractionCtx.fillStyle = 'black';
-    refractionCtx.fillText(`${refractionAngleSlider.value}°`, intersectX + 10, intersectY - 10);
-    refractionCtx.fillText(`${(refractedAngle * 180 / Math.PI).toFixed(1)}°`, intersectX + 10, intersectY + 20);
+    // Draw angle
+    refractionCtx.fillText('90°', intersectX + 10, intersectY - 10);
 
     // Label media
+    refractionCtx.font = '14px Arial';
+    refractionCtx.fillStyle = 'black';
     refractionCtx.fillText(`n1 = ${n1}`, 10, intersectY - 10);
     refractionCtx.fillText(`n2 = ${n2}`, 10, intersectY + 20);
+
+    return; // Skip the rest of the refraction logic
+}
+
+        // Calculate refracted angle using Snell's law
+        let refractedAngle = Math.asin((n1 / n2) * Math.sin(angle));
+
+        if (isNaN(refractedAngle)) {
+            // Total internal reflection occurs
+            refractedAngle = Math.PI - angle;
+
+            // Draw reflected ray above the surface
+            refractionCtx.beginPath();
+            refractionCtx.moveTo(intersectX, intersectY);
+            refractionCtx.lineTo(intersectX + Math.sin(refractedAngle) * refractionDemo.width / 2, 
+            intersectY - Math.abs(Math.cos(refractedAngle)) * refractionDemo.height / 2);
+            refractionCtx.strokeStyle = 'green';
+            refractionCtx.stroke();
+
+            // Draw incident and reflected angles
+            refractionCtx.fillText(`${90 - (refractionAngleSlider.value)}°`, intersectX + 10, intersectY - 10);
+            refractionCtx.fillText(`${90 - (refractionAngleSlider.value)}°`, intersectX + 10, intersectY - 40);
+        } else {
+            // Draw refracted ray
+            refractionCtx.beginPath();
+            refractionCtx.moveTo(intersectX, intersectY);
+            refractionCtx.lineTo(intersectX + Math.sin(refractedAngle) * refractionDemo.width / 2, intersectY + Math.cos(refractedAngle) * refractionDemo.height / 2);
+            refractionCtx.strokeStyle = 'blue';
+            refractionCtx.stroke();
+
+            // Draw angles
+            refractionCtx.fillText(`${90 - (refractionAngleSlider.value)}°`, intersectX + 10, intersectY - 10);
+            refractionCtx.fillText(`${90 - ((90 - refractedAngle * 180 / Math.PI).toFixed(1))}°`, intersectX + 10, intersectY + 20);
+        }
+
+        // Label media
+        refractionCtx.font = '14px Arial';
+        refractionCtx.fillStyle = 'black';
+        refractionCtx.fillText(`n1 = ${n1}`, 10, intersectY - 10);
+        refractionCtx.fillText(`n2 = ${n2}`, 10, intersectY + 20);
+    } catch (error) {
+        console.error(error.message);
+    }
 }
 
 
+
+
         refractionAngleSlider.addEventListener('input', () => {
-            refractionAngleValue.textContent = refractionAngleSlider.value;
+            refractionAngleValue.textContent = 90 -refractionAngleSlider.value;
             drawRefraction();
         });
 
