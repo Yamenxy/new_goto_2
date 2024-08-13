@@ -233,7 +233,7 @@
         </div>
       </footer>
 
-    <script>
+     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Reflection demo
         const reflectionDemo = document.getElementById('reflection-demo');
@@ -379,6 +379,7 @@ function drawRefraction() {
         // Calculate intersection point (center of the canvas)
         const intersectX = refractionDemo.width / 2;
         const intersectY = refractionDemo.height / 2;
+        let criticalAngle = Math.asin(n2 / n1) * 180 / Math.PI; // θc in degrees
 
         // Draw normal (vertical line)
         refractionCtx.beginPath();
@@ -420,6 +421,8 @@ function drawRefraction() {
             refractionCtx.fillStyle = 'black';
             refractionCtx.fillText(`n1 = ${n1}, v1 = ${v1} Mm/s, λ1 = ${lambda1} nm`, 10, intersectY - 25);
             refractionCtx.fillText(`n2 = ${n2}, v2 = ${v2} Mm/s, λ2 = ${lambda2} nm`, 10, intersectY + 35);
+            refractionCtx.fillText(`θc = ${criticalAngle.toFixed(2)}°`, 10, intersectY + 50);
+
 
             return; // Skip the rest of the refraction logic
         }
@@ -464,6 +467,8 @@ function drawRefraction() {
         refractionCtx.fillStyle = 'black';
         refractionCtx.fillText(`n1 = ${n1}, v1 = ${v1} Mm/s, λ1 = ${lambda1} nm`, 10, intersectY - 25);
         refractionCtx.fillText(`n2 = ${n2}, v2 = ${v2} Mm/s, λ2 = ${lambda2} nm`, 10, intersectY + 35);
+        refractionCtx.fillText(`θc = ${criticalAngle.toFixed(2)}°`, 10, intersectY + 50);
+
 
     } catch (error) {
         console.error(error.message);
