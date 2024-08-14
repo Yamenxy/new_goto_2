@@ -359,125 +359,136 @@
             return `rgb(${r}, ${g}, ${b})`;
         }
 
-        function drawRefraction() {
-            try {
-                if (!refractionCtx) {
-                    throw new Error('Refraction canvas context not available');
-                }
-
-                const angle = (90 - refractionAngleSlider.value) * Math.PI / 180;
-                const n1 = parseFloat(medium1Select.value);
-                const n2 = parseFloat(medium2Select.value);
-                const wavelength1 = parseFloat(document.getElementById('wavelengthInput').value); // Wavelength in medium 1
-
-                if (isNaN(n1) || isNaN(n2) || isNaN(wavelength1)) {
-                    throw new Error('Invalid refractive indices or wavelength. Please select valid media and wavelength.');
-                }
-
-                if (n1 <= 0 || n2 <= 0 || wavelength1 <= 0) {
-                    throw new Error('Refractive indices and wavelength must be positive values.');
-                }
-
-                const incidentRayColor = wavelengthToRGB(wavelength1); // Color for the incident ray
-
-                refractionCtx.clearRect(0, 0, refractionDemo.width, refractionDemo.height);
-
-                // Draw medium boundary
-                refractionCtx.beginPath();
-                refractionCtx.moveTo(0, refractionDemo.height / 2);
-                refractionCtx.lineTo(refractionDemo.width, refractionDemo.height / 2);
-                refractionCtx.strokeStyle = 'black';
-                refractionCtx.stroke();
-
-                // Calculate intersection point (center of the canvas)
-                const intersectX = refractionDemo.width / 2;
-                const intersectY = refractionDemo.height / 2;
-                let criticalAngle = Math.asin(n2 / n1) * 180 / Math.PI; // θ c in degrees
-
-                // Draw normal (vertical line)
-                refractionCtx.beginPath();
-                refractionCtx.moveTo(intersectX, intersectY - 50);
-                refractionCtx.lineTo(intersectX, intersectY + 50);
-                refractionCtx.strokeStyle = 'green';
-                refractionCtx.stroke();
-
-                // Draw incident ray with the color based on the wavelength
-                refractionCtx.beginPath();
-                refractionCtx.moveTo(intersectX - Math.sin(angle) * refractionDemo.width / 2, intersectY - Math.cos(angle) * refractionDemo.height / 2);
-                refractionCtx.lineTo(intersectX, intersectY);
-                refractionCtx.strokeStyle = incidentRayColor;
-                refractionCtx.stroke();
-
-                // Constants
-                const c = 299792458; // Speed of light in vacuum (m/s)
-
-                // Calculate speeds and wavelengths
-                const v1 = (c / n1 / 1000000).toFixed(2); // Speed in medium 1 (Mm/s)
-                const v2 = (c / n2 / 1000000).toFixed(2); // Speed in medium 2 (Mm/s)
-                const wavelength2 = (wavelength1 * n1 / n2).toFixed(2); // Wavelength in medium 2 (nm)
-
-                // Calculate refracted angle using Snell's law
-                let refractedAngle = Math.asin((n1 / n2) * Math.sin(angle));
-
-                // Convert refracted wavelength to color
-                const refractedRayColor = wavelengthToRGB(wavelength2);
-
-                if (isNaN(refractedAngle)) {
-                    // Total internal reflection occurs
-                    refractedAngle = Math.PI - angle;
-
-                    // Draw reflected ray above the surface
-                    refractionCtx.beginPath();
-                    refractionCtx.moveTo(intersectX, intersectY);
-                    refractionCtx.lineTo(intersectX + Math.sin(refractedAngle) * refractionDemo.width / 2, 
-                    intersectY - Math.abs(Math.cos(refractedAngle)) * refractionDemo.height / 2);
-                    refractionCtx.strokeStyle = incidentRayColor;
-                    refractionCtx.stroke();
-
-                    // Draw incident and reflected angles
-                    refractionCtx.fillText(`${(90 - refractionAngleSlider.value).toFixed(2)}°`, intersectX + 10, intersectY - 10);
-                    refractionCtx.fillText(`${(90 - refractionAngleSlider.value).toFixed(2)}°`, intersectX + 10, intersectY - 40);
-                } else {
-                    // Draw refracted ray with the color based on the refracted wavelength
-                    refractionCtx.beginPath();
-                refractionCtx.moveTo(intersectX, intersectY);
-                refractionCtx.lineTo(intersectX + Math.sin(refractedAngle) * refractionDemo.width / 2, 
-                intersectY + Math.cos(refractedAngle) * refractionDemo.height / 2);
-                refractionCtx.strokeStyle = refractedRayColor;
-                refractionCtx.stroke();
-
-                // Draw incident and refracted angles
-                refractionCtx.fillStyle = 'black';
-                refractionCtx.fillText(`${(90 - refractionAngleSlider.value).toFixed(2)}°`, intersectX - 40, intersectY - 10);
-                refractionCtx.fillText(`${(refractedAngle * 180 / Math.PI).toFixed(2)}°`, intersectX + 10, intersectY + 20);
-
-                // Display speeds and wavelengths in both media
-                // refractionCtx.fillText(`v1: ${v1} Mm/s, λ1: ${wavelength1} nm`, 10, 20);
-                // refractionCtx.fillText(`v2: ${v2} Mm/s, λ2: ${wavelength2} nm`, 10, 40);
-
-                }
-
-                // Label media, light speed, and wavelength
-                refractionCtx.font = '11px Arial';
-                refractionCtx.fillStyle = 'black';
-                refractionCtx.fillText(`n1 = ${n1}`, 10, intersectY - 25);
-                refractionCtx.fillText(`v1 = ${v1} Mm/s`, 10, intersectY - 50);
-                refractionCtx.fillText(`λ1 = ${wavelength1.toFixed(2)} nm`, 10, intersectY - 75);
-
-                refractionCtx.fillText(`n2 = ${n2}`, 10, intersectY + 25);
-                refractionCtx.fillText(`v2 = ${v2} Mm/s`, 10, intersectY + 50);
-                refractionCtx.fillText(`λ2 = ${wavelength2} nm`, 10, intersectY + 75);
-
-                refractionCtx.fillText(`θc = ${criticalAngle.toFixed(2)}°`, 10, intersectY + 100);
-                refractionAngleValue.textContent = (90 - refractionAngleSlider.value).toFixed(2);
-              } catch (error) {
-                console.error('Error in drawing refraction: ', error.message);
-                refractionCtx.clearRect(0, 0, refractionDemo.width, refractionDemo.height);
-                refractionCtx.fillText('Error: ' + error.message, 10, 50);
-            }
-        
+          function drawRefraction() {
+    try {
+        if (!refractionCtx) {
+            throw new Error('Refraction canvas context not available');
         }
 
+        const angle = (90 - refractionAngleSlider.value) * Math.PI / 180;
+        const n1 = parseFloat(medium1Select.value);
+        const n2 = parseFloat(medium2Select.value);
+        const wavelength1 = parseFloat(document.getElementById('wavelengthInput').value); // Wavelength in medium 1
+
+        if (isNaN(n1) || isNaN(n2) || isNaN(wavelength1)) {
+            throw new Error('Invalid refractive indices or wavelength. Please select valid media and wavelength.');
+        }
+
+        if (n1 <= 0 || n2 <= 0 || wavelength1 <= 0) {
+            throw new Error('Refractive indices and wavelength must be positive values.');
+        }
+
+        const incidentRayColor = wavelengthToRGB(wavelength1); // Color for the incident ray
+
+        refractionCtx.clearRect(0, 0, refractionDemo.width, refractionDemo.height);
+
+        // Draw medium boundary
+        refractionCtx.beginPath();
+        refractionCtx.moveTo(0, refractionDemo.height / 2);
+        refractionCtx.lineTo(refractionDemo.width, refractionDemo.height / 2);
+        refractionCtx.strokeStyle = 'black';
+        refractionCtx.stroke();
+
+        // Calculate intersection point (center of the canvas)
+        const intersectX = refractionDemo.width / 2;
+        const intersectY = refractionDemo.height / 2;
+
+        // Draw normal (vertical line)
+        refractionCtx.beginPath();
+        refractionCtx.moveTo(intersectX, intersectY - 50);
+        refractionCtx.lineTo(intersectX, intersectY + 50);
+        refractionCtx.strokeStyle = 'green';
+        refractionCtx.stroke();
+
+        // Check if the incident angle is exactly 90 degrees (tangent)
+        if (refractionAngleSlider.value === '0') {
+            // Draw the tangent ray
+            refractionCtx.beginPath();
+            refractionCtx.moveTo(0, intersectY);
+            refractionCtx.lineTo(refractionDemo.width, intersectY);
+            refractionCtx.strokeStyle = incidentRayColor;
+            refractionCtx.stroke();
+
+            // Label the ray as tangent
+            refractionCtx.fillStyle = 'black';
+            refractionCtx.fillText('Tangent ray', intersectX + 10, intersectY - 10);
+
+            // No further processing is needed
+            return;
+        }
+
+        // Draw incident ray with the color based on the wavelength
+        refractionCtx.beginPath();
+        refractionCtx.moveTo(intersectX - Math.sin(angle) * refractionDemo.width / 2, intersectY - Math.cos(angle) * refractionDemo.height / 2);
+        refractionCtx.lineTo(intersectX, intersectY);
+        refractionCtx.strokeStyle = incidentRayColor;
+        refractionCtx.stroke();
+
+        // Constants
+        const c = 299792458; // Speed of light in vacuum (m/s)
+
+        // Calculate speeds and wavelengths
+        const v1 = (c / n1 / 1000000).toFixed(2); // Speed in medium 1 (Mm/s)
+        const v2 = (c / n2 / 1000000).toFixed(2); // Speed in medium 2 (Mm/s)
+        const wavelength2 = (wavelength1 * n1 / n2).toFixed(2); // Wavelength in medium 2 (nm)
+        let criticalAngle = Math.asin(n2 / n1) * 180 / Math.PI; // θ c in degrees
+
+
+        // Calculate refracted angle using Snell's law
+        let refractedAngle = Math.asin((n1 / n2) * Math.sin(angle));
+
+        // Convert refracted wavelength to color
+        const refractedRayColor = wavelengthToRGB(wavelength2);
+
+        if (isNaN(refractedAngle)) {
+            // Total internal reflection occurs
+            refractedAngle = Math.PI - angle;
+
+            // Draw reflected ray above the surface
+            refractionCtx.beginPath();
+            refractionCtx.moveTo(intersectX, intersectY);
+            refractionCtx.lineTo(intersectX + Math.sin(refractedAngle) * refractionDemo.width / 2, 
+            intersectY - Math.abs(Math.cos(refractedAngle)) * refractionDemo.height / 2);
+            refractionCtx.strokeStyle = incidentRayColor;
+            refractionCtx.stroke();
+
+            // Draw incident and reflected angles
+            refractionCtx.fillText(`${(90 - refractionAngleSlider.value).toFixed(2)}°`, intersectX + 10, intersectY - 10);
+            refractionCtx.fillText(`${(90 - refractionAngleSlider.value).toFixed(2)}°`, intersectX + 10, intersectY - 40);
+        } else {
+            // Draw refracted ray with the color based on the refracted wavelength
+            refractionCtx.beginPath();
+            refractionCtx.moveTo(intersectX, intersectY);
+            refractionCtx.lineTo(intersectX + Math.sin(refractedAngle) * refractionDemo.width / 2, 
+            intersectY + Math.cos(refractedAngle) * refractionDemo.height / 2);
+            refractionCtx.strokeStyle = refractedRayColor;
+            refractionCtx.stroke();
+
+            // Draw incident and refracted angles
+            refractionCtx.fillStyle = 'black';
+            refractionCtx.fillText(`${(90 - refractionAngleSlider.value).toFixed(2)}°`, intersectX - 40, intersectY - 10);
+            refractionCtx.fillText(`${(refractedAngle * 180 / Math.PI).toFixed(2)}°`, intersectX + 10, intersectY + 20);
+        }
+
+        // Label media, light speed, and wavelength
+        refractionCtx.font = '11px Arial';
+        refractionCtx.fillStyle = 'black';
+        refractionCtx.fillText(`n1 = ${n1}`, 10, intersectY - 25);
+        refractionCtx.fillText(`v1 = ${v1} Mm/s`, 10, intersectY - 50);
+        refractionCtx.fillText(`λ1 = ${wavelength1.toFixed(2)} nm`, 10, intersectY - 75);
+
+        refractionCtx.fillText(`n2 = ${n2}`, 10, intersectY + 25);
+        refractionCtx.fillText(`v2 = ${v2} Mm/s`, 10, intersectY + 50);
+        refractionCtx.fillText(`λ2 = ${wavelength2} nm`, 10, intersectY + 75);
+
+        refractionCtx.fillText(`θc = ${criticalAngle.toFixed(2)}°`, 10, intersectY + 100);
+        refractionAngleValue.textContent = (90 - refractionAngleSlider.value).toFixed(2);
+    } catch (error) {
+        console.error('Error in drawing refraction: ', error.message);
+        refractionCtx.clearRect(0, 0, refractionDemo.width, refractionDemo.height);
+        refractionCtx.fillText('Error: ' + error.message, 10, 50);
+    }
+}
         refractionAngleSlider.addEventListener('input', () => {
             refractionAngleInput.value = 90 - refractionAngleSlider.value;
             drawRefraction();
