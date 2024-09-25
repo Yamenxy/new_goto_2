@@ -6,55 +6,20 @@
 <title>Paid Video Access</title>
 <style>
     * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-/* End Global rules */
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
 
-/* Start body rules */
-body {
-    background-image: linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%);
-background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-background-attachment: fixed;
-  background-repeat: no-repeat;
-
-    font-family: 'Vibur', cursive;
-/*   the main font */
-    font-family: 'Abel', sans-serif;
-opacity: .95;
-/* background-image: linear-gradient(to top, #d9afd9 0%, #97d9e1 100%); */
-}
-.input-item {
-    background: #fff;
-    color: #333;
-    padding: 14.5px 0px 15px 9px;
-    border-radius: 5px 0px 0px 5px;
-}
-input[class="form-input"]{
-    width: 240px;
-    height: 50px;
-  
-    margin-top: 2%;
-    padding: 15px;
-    
-    font-size: 16px;
-    font-family: 'Abel', sans-serif;
-    color: #5E6472;
-  
-    outline: none;
-    border: none;
-  
-    border-radius: 0px 5px 5px 0px;
-    transition: 0.2s linear;
-    
-}
-input[id="txt-input"] {width: 250px;}
-/* focus  */
-input:focus {
-    transform: translateX(-2px);
-    border-radius: 5px;
-}
+    body {
+        background-image: linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%);
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        font-family: 'Vibur', cursive;
+        font-family: 'Abel', sans-serif;
+        opacity: .95;
+    }
 
     .container {
         max-width: 800px;
@@ -67,118 +32,23 @@ input:focus {
         margin-bottom: 20px;
     }
 
-    .error {
-        color: red;
-    }
-
-    #login-error {
-        margin-top: 10px;
-    }
-
-    #loading-message {
-        margin-top: 10px;
-        display: none;
-    }
-
     #video-container {
         margin-top: 20px;
-    }
-
-    .phone-option {
-        display: block;
-        margin-bottom: 10px;
     }
 </style>
 </head>
 <body>
     <div>
         <div class="container">
-            <div id="login">
-                <h2>Enter Your Code</h2>
-                <input type="text" id="code" placeholder="Enter Code" style=" width: 240px;
-                height: 50px;
-              
-                margin-top: 2%;
-                padding: 15px;
-                
-                font-size: 16px;
-                font-family: 'Abel', sans-serif;
-                color: #5E6472;
-              
-                outline: none;
-                border: none;
-              
-                border-radius: 0px 5px 5px 0px;
-                transition: 0.2s linear;" required><br>
-                <button id="checkButton" style=" display: inline-block;
-                color: #252537;
-              
-                width: 280px;
-                height: 50px;
-              
-                padding: 0 20px;
-                background: #fff;
-                border-radius: 5px;
-                
-                outline: none;
-                border: none;
-              
-                cursor: pointer;
-                text-align: center;
-                transition: all 0.2s linear;
-                
-                margin: 7% auto;
-                letter-spacing: 0.05em;">Check</button>
-                <p id="login-error" class="error"></p>
-                <p id="loading-message">Loading...</p>
-                
-            </div>
-        
-                <!-- CHANGE THE VIDEO'S URL  -->
-                <div id="video-container" style="display: none;">
-                    <iframe src="https://drive.google.com/file/d/1HK1YlKAlYuKhfasLKhA1rcSoFJfHtq_B/preview"
+            <div id="video-container">
+                   <iframe src="https://drive.google.com/file/d/1HK1YlKAlYuKhfasLKhA1rcSoFJfHtq_B/preview"
                             width="640" 
                             height="480"
                             allow="autoplay; fullscreen" 
                             allowfullscreen>
-                    </iframe>
-                </div>
-                
-        <script>
-        document.getElementById("checkButton").addEventListener("click", checkPassword);
-
-        function checkPassword() {
-            var code = document.getElementById("code").value;
-            var loadingMessage = document.getElementById("loading-message");
-            var loginError = document.getElementById("login-error");
-
-            loginError.textContent = "";
-            if (code.trim() === "") {
-                loginError.textContent = "Code is required!";
-            } else {
-                loadingMessage.style.display = "block";
-                fetch('https://script.google.com/macros/s/AKfycbykH_8pnh-DRuraCrX2M-WMfVGZrNdhjpjrbfKEVp1CXrS-fzMn_QgyLXD8MsIEvFgh/exec?code=' + code + '&column=1')
-                    .then(response => response.json())
-                    .then(data => {
-                        loadingMessage.style.display = "none";
-                        if (data.exists) {
-                            document.getElementById("login").style.display = "none";
-                            document.getElementById("video-container").style.display = "block";
-                        } else {
-                            if (data.message) {
-                                loginError.textContent = data.message;
-                            } else {
-                                loginError.textContent = 'Invalid code. Please try again.';
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        loadingMessage.style.display = "none";
-                        loginError.textContent = "An error occurred. Please try again.";
-                        console.error('Error:', error);
-                    });
-            }
-        }
-    </script>
+                    </iframe>     
+            </div>
+        </div>
+    </div>
 </body>
 </html>
