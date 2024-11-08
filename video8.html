@@ -1,178 +1,175 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Paid Video Access</title>
+<title>Video Source Selection</title>
 <style>
     * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-/* End Global rules */
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
 
-/* Start body rules */
-body {
-    background-image: linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%);
-background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-background-attachment: fixed;
-  background-repeat: no-repeat;
-
-    font-family: 'Vibur', cursive;
-/*   the main font */
-    font-family: 'Abel', sans-serif;
-opacity: .95;
-/* background-image: linear-gradient(to top, #d9afd9 0%, #97d9e1 100%); */
-}
-.input-item {
-    background: #fff;
-    color: #333;
-    padding: 14.5px 0px 15px 9px;
-    border-radius: 5px 0px 0px 5px;
-}
-input[class="form-input"]{
-    width: 240px;
-    height: 50px;
-  
-    margin-top: 2%;
-    padding: 15px;
-    
-    font-size: 16px;
-    font-family: 'Abel', sans-serif;
-    color: #5E6472;
-  
-    outline: none;
-    border: none;
-  
-    border-radius: 0px 5px 5px 0px;
-    transition: 0.2s linear;
-    
-}
-input[id="txt-input"] {width: 250px;}
-/* focus  */
-input:focus {
-    transform: translateX(-2px);
-    border-radius: 5px;
-}
+    body {
+        background-color: #181818;
+        font-family: 'Abel', sans-serif;
+    }
 
     .container {
-        max-width: 800px;
-        margin: 50px auto;
-        padding: 20px;
-        text-align: center;
-    }
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse; /* Initially, video sources on the right */
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    color: white;
+}
 
-    h1, h2 {
-        margin-bottom: 20px;
-    }
 
-    .error {
-        color: red;
-    }
+.video-sources {
+    flex: 1;
+    padding: 20px;
+    background-color: #222;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
 
-    #login-error {
-        margin-top: 10px;
-    }
 
-    #loading-message {
-        margin-top: 10px;
-        display: none;
-    }
 
-    #video-container {
-        margin-top: 20px;
-    }
-
-    .phone-option {
-        display: block;
+    .source-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 20px;
+        background-color: #333;
+        border-radius: 10px;
         margin-bottom: 10px;
+        cursor: pointer;
+        transition: background 0.3s ease;
     }
+
+    .source-item:hover {
+        background-color: #444;
+    }
+
+    .source-item img {
+        height: 30px;
+        width: 30px;
+        margin-right: 20px;
+    }
+
+    .source-label {
+        flex: 1;
+        font-size: 1.2rem;
+    }
+
+    .source-resolution {
+        font-weight: bold;
+        background-color: #00C9FF;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    /* Transparent overlay that blocks user interaction */
+    .iframe-overlay {
+    position: absolute;
+    top: 10px; /* Adjust to cover the share button */
+    right: 10px; /* Adjust to cover the share button */
+    width: 50px; /* Adjust width to cover the share button */
+    height: 50px; /* Adjust height to cover the share button */
+    z-index: 3;
+    background-color: rgba(255, 255, 255, 0); /* Fully transparent */
+}
+
+
+
+    /* Larger Video Container */
+    .video-container {
+    flex: 3;
+    background-color: #000;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    position: relative; /* Relative for the overlay positioning */
+}
+
+/* Adjust iframe size */
+.video-container iframe {
+    width: 100%;
+    height: 600px;
+    border: none;
+    border-radius: 10px;
+    position: relative;
+    z-index: 2; /* Ensure it's above the overlay */
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Stack items vertically on small screens */
+    }
+
+    .video-sources {
+        flex: none; /* Reset flex to default to allow proper sizing */
+        margin-bottom: 20px; /* Add space between video sources and video */
+    }
+
+    .video-container {
+        flex: none; /* Reset flex to default to allow proper sizing */
+    }
+
+    .video-container iframe {
+        height: 400px; /* Adjust iframe height for smaller screens */
+    }
+}
+
 </style>
 </head>
 <body>
-    <div>
-        <div class="container">
-            <div id="login">
-                <h2>Enter The Password</h2>
-                <input type="text" id="code" placeholder="Enter Code" style=" width: 240px;
-                height: 50px;
-              
-                margin-top: 2%;
-                padding: 15px;
-                
-                font-size: 16px;
-                font-family: 'Abel', sans-serif;
-                color: #5E6472;
-              
-                outline: none;
-                border: none;
-              
-                border-radius: 0px 5px 5px 0px;
-                transition: 0.2s linear;" required><br>
-                <button id="checkButton" style=" display: inline-block;
-                color: #252537;
-              
-                width: 280px;
-                height: 50px;
-              
-                padding: 0 20px;
-                background: #fff;
-                border-radius: 5px;
-                
-                outline: none;
-                border: none;
-              
-                cursor: pointer;
-                text-align: center;
-                transition: all 0.2s linear;
-                
-                margin: 7% auto;
-                letter-spacing: 0.05em;">Check</button>
-                <p id="login-error" class="error"></p>
-                <p id="loading-message">Loading...</p>
-                
+    <div class="container">
+        <!-- Video Source Selection -->
+        <div class="video-sources">
+            <div class="source-item" onclick="loadVideo('drive')">
+                <img src="images/27aaa2af-994c-4d8a-8221-c5a3674cbb9b-removebg-preview_logo.png" alt="Google Drive Icon">
+                <div class="source-label">Google Drive</div>
+                <div class="source-resolution">FHD</div>
             </div>
-        
-                <!-- CHANGE THE VIDEO'S URL  -->
-            <div id="video-container" style="display: none;">
-                <iframe src="https://drive.google.com/file/d/1MgcgtmJrJjQa-js_wXgimgGTr-gj642N/preview" width="640" height="480" allow="autoplay allowfullscreen" allowfullscreen></iframe>        </div>
+
+<!--             <div class="source-item" onclick="loadVideo('pcloud')">
+                <img src="images/27aaa2af-994c-4d8a-8221-c5a3674cbb9b-removebg-preview_logo.png" alt="pcloud Icon">
+                <div class="source-label">pcloud</div>
+                <div class="source-resolution">FHD</div>
+            </div> -->
+
+            <div class="source-item" onclick="loadVideo('mega')">
+                <img src="images/27aaa2af-994c-4d8a-8221-c5a3674cbb9b-removebg-preview_logo.png" alt="Mega Icon">
+                <div class="source-label">Mega.nz</div>
+                <div class="source-resolution">FHD</div>
+            </div>
         </div>
+
+        <!-- Larger Video Container -->
+        <div class="video-container">
+            <div class="iframe-overlay"></div> <!-- Transparent overlay -->
+            <iframe id="video-frame" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+
     <script>
-        document.getElementById("checkButton").addEventListener("click", checkPassword);
+        function loadVideo(source) {
+            const iframe = document.getElementById('video-frame');
 
-        function checkPassword() {
-            var code = document.getElementById("code").value;
-            var loadingMessage = document.getElementById("loading-message");
-            var loginError = document.getElementById("login-error");
-
-            loginError.textContent = "";
-            if (code.trim() === "") {
-                loginError.textContent = "Code is required!";
-            } else {
-                loadingMessage.style.display = "block";
-                fetch('https://script.google.com/macros/s/AKfycbykH_8pnh-DRuraCrX2M-WMfVGZrNdhjpjrbfKEVp1CXrS-fzMn_QgyLXD8MsIEvFgh/exec?code=' + code + '&column=7')
-                    .then(response => response.json())
-                    .then(data => {
-                        loadingMessage.style.display = "none";
-                        if (data.exists) {
-                            document.getElementById("login").style.display = "none";
-                            document.getElementById("video-container").style.display = "block";
-                        } else {
-                            if (data.message) {
-                                loginError.textContent = data.message;
-                            } else {
-                                loginError.textContent = 'Invalid code. Please try again.';
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        loadingMessage.style.display = "none";
-                        loginError.textContent = "An error occurred. Please try again.";
-                        console.error('Error:', error);
-                    });
+            if (source === 'mega') {
+                iframe.src = "https://mega.nz/embed/C7JkVBCa#NWWKlQsp52a3xYYK7Nez3ll-9vmHS7vwWJNMWGtVd_g";
+            } else if (source === 'drive') {
+                iframe.src = "https://drive.google.com/file/d/1MgcgtmJrJjQa-js_wXgimgGTr-gj642N/preview"; 
+            } else if (source === 'pcloud') {
+                iframe.src = ""; 
             }
         }
     </script>
 </body>
+
 </html>
