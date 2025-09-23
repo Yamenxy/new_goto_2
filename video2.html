@@ -242,20 +242,26 @@
     </div>
 
 <script>
-  
-
+    function loadVideo(source) {
         const iframe = document.getElementById("video-frame");
         if (source === 'mega') {
             iframe.src = "https://mega.nz/embed/PyQimTYb#txHuiDBquSTBU1TafBgkCKe_xjTuT9HpJ9xUSE1dh-E";
         } else if (source === 'drive') {
-            iframe.src = ""; 
+            iframe.src = "YOUR_GOOGLE_DRIVE_EMBED_LINK"; 
         } else if (source === 'pcloud') {
-            iframe.src = ""; 
+            iframe.src = "YOUR_PCLOUD_EMBED_LINK"; 
         }
+    }
+
+    // 🔥 Load a default video on page load
+    window.onload = function() {
+        document.getElementById("videoSection").style.display = "flex";
+        loadVideo("drive");  // Change "drive" to "mega" or "pcloud" if you prefer
     }
 </script>
 </body>
 </html>
+
 
 
 
