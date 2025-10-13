@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Page Login</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
   <style>
     :root {
       --background: #1a1a2e;
@@ -65,13 +65,14 @@
       display: block;
       padding: 14.5px;
       width: 100%;
-      margin: 1.2rem 0;
+      margin: 1.5rem 0;
       color: var(--color);
       outline: none;
       background-color: #9191911f;
       border: none;
       border-radius: 5px;
       font-weight: 500;
+      letter-spacing: 0.8px;
       font-size: 15px;
       backdrop-filter: blur(15px);
     }
@@ -93,14 +94,14 @@
       font-weight: bold;
       width: 100%;
       cursor: pointer;
-      margin-bottom: 1rem;
-      border: none;
+      margin-bottom: 2rem;
       transition: all 0.1s ease-in-out;
+      border: none;
     }
 
     .login-container form button:hover {
-      transform: scale(1.02);
       box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.15);
+      transform: scale(1.02);
     }
 
     .circle {
@@ -139,18 +140,19 @@
       align-items: center;
     }
 
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
     .opacity {
       opacity: 0.6;
     }
 
-    #loading-message {
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    #login-error {
-      text-align: center;
-      color: red;
+    @keyframes wobble {
+      0%, 75%, 100% { transform: scale(1); }
+      25%, 50% { transform: scale(1.025); }
     }
   </style>
 </head>
@@ -159,35 +161,37 @@
     <div class="login-container">
       <div class="circle circle-one"></div>
       <div class="form-container">
-        <img src="https://raw.githubusercontent.com/hicodersofficial/glassmorphism-login-form/master/assets/illustration.png" alt="illustration" class="illustration" />
+        <img
+          src="https://raw.githubusercontent.com/hicodersofficial/glassmorphism-login-form/master/assets/illustration.png"
+          alt="illustration"
+          class="illustration"
+        />
         <h1 class="opacity">Admin_Page</h1>
-
         <form onsubmit="event.preventDefault(); checkPassword();">
-          <input type="text" id="code" placeholder="Enter The Code..." required />
+          <input type="text" id="code" placeholder="Enter The code..." required />
           <input type="password" id="password" placeholder="Enter The Password..." required />
 
-          <!-- ✅ Remember Me -->
-          <div class="form-check" style="text-align: left;">
-            <input class="form-check-input" type="checkbox" id="rememberMe">
-            <label class="form-check-label" for="rememberMe" style="color:white;">Remember Me</label>
+          <div class="register-forget opacity">
+            <label class="remember-me">
+              <input type="checkbox" id="rememberMe" />
+              Remember Me
+            </label>
           </div>
 
           <button type="submit">Check</button>
-
-          <div id="loading-message" style="display:none; color: white;">Loading...</div>
-          <div id="login-error"></div>
         </form>
+        <div id="loading-message" style="display:none; color: white;">Loading...</div>
+        <div id="login-error" style="color: red;"></div>
       </div>
       <div class="circle circle-two"></div>
     </div>
   </section>
 
   <script>
-    // ✅ Auto-fill saved data if exists
-    window.onload = function() {
+    // 🧠 Load saved login info if available
+    window.onload = function () {
       const savedCode = localStorage.getItem("savedCode");
       const savedPassword = localStorage.getItem("savedPassword");
-
       if (savedCode && savedPassword) {
         document.getElementById("code").value = savedCode;
         document.getElementById("password").value = savedPassword;
@@ -195,5 +199,56 @@
       }
     };
 
+    // 🔐 Function to check password
     function checkPassword() {
-      var code = document.getElementById("cod
+      var code = document.getElementById("code").value;
+      var password = document.getElementById("password").value;
+      var remember = document.getElementById("rememberMe").checked;
+      var loadingMessage = document.getElementById("loading-message");
+      var loginError = document.getElementById("login-error");
+
+      if (code.trim() === "" || password.trim() === "") {
+        loginError.textContent = "Code and password are required!";
+        return;
+      }
+
+      loadingMessage.style.display = "block";
+      loginError.textContent = "";
+
+      var url =
+        "https://script.google.com/macros/s/AKfycbyvh7NP8tbBL_t2rdl2VY8PNW-89Dm1OGetVCWaJyng3IlwBDV2rDwHg0mhiOuTdfIL/exec";
+      url +=
+        "?code=" +
+        encodeURIComponent(code) +
+        "&password=" +
+        encodeURIComponent(password);
+
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          loadingMessage.style.display = "none";
+          if (data.exists) {
+            if (remember) {
+              // 💾 Save login info
+              localStorage.setItem("savedCode", code);
+              localStorage.setItem("savedPassword", password);
+            } else {
+              // ❌ Remove saved data if unchecked
+              localStorage.removeItem("savedCode");
+              localStorage.removeItem("savedPassword");
+            }
+
+            window.location.href = "welcome_page.html?username=" + code;
+          } else {
+            loginError.textContent = "Incorrect code or password. Please try again.";
+          }
+        })
+        .catch((error) => {
+          loadingMessage.style.display = "none";
+          console.error("Error:", error);
+          loginError.textContent = "An error occurred. Please try again.";
+        });
+    }
+  </script>
+</body>
+</html>
