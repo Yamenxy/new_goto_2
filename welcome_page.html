@@ -1,248 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome Page</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Lato:300,400|Poppins:300,400,800&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Page</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Lato:300,400|Poppins:300,400,800&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+    }
 
-        body, html {
-            overflow: hidden;
-        }
+    body, html {
+      overflow: hidden;
+    }
 
-        .container {
-            width: 100%;
-            height: 100vh;
-            background: #232323;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    .container {
+      width: 100%;
+      height: 100vh;
+      background: #232323;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .box {
-            width: 250px;
-            height: 250px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-        }
+    .box {
+      width: 250px;
+      height: 250px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+    }
 
-        .title {
-            width: 100%;
-            position: relative;
-            display: flex;
-            align-items: center;
-            height: 50px;
-        }
+    .title {
+      width: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 50px;
+    }
 
-        .block {
-            width: 0%;
-            height: inherit;
-            background: #ffb510;
-            position: absolute;
-            animation: mainBlock 2s cubic-bezier(.74, .06, .4, .92) forwards;
-            display: flex;
-        }
+    .block {
+      width: 0%;
+      height: inherit;
+      background: #ffb510;
+      position: absolute;
+      animation: mainBlock 2s cubic-bezier(.74, .06, .4, .92) forwards;
+      display: flex;
+    }
 
-        h1 {
-            font-family: 'Poppins';
-            color: #fff;
-            font-size: 32px;
-            animation: mainFadeIn 2s forwards;
-            animation-delay: 1.6s;
-            opacity: 0;
-            display: flex;
-            align-items: baseline;
-            position: relative;
-        }
+    h1 {
+      font-family: 'Poppins';
+      color: #fff;
+      font-size: 32px;
+      animation: mainFadeIn 2s forwards;
+      animation-delay: 1.6s;
+      opacity: 0;
+      display: flex;
+      align-items: baseline;
+      position: relative;
+    }
 
-        span {
-            width:0px;
-            height: 0px;
-            border-radius: 50%;
-            background: #ffb510;
-            animation: popIn 0.8s cubic-bezier(.74, .06, .4, .92) forwards;
-            animation-delay: 2s;
-            margin-left: 5px;
-            margin-top: -10px;
-            position: absolute;
-            bottom: 13px;
-            right: -12px;
-        }
+    span {
+      width: 0px;
+      height: 0px;
+      border-radius: 50%;
+      background: #ffb510;
+      animation: popIn 0.8s cubic-bezier(.74, .06, .4, .92) forwards;
+      animation-delay: 2s;
+      margin-left: 5px;
+      margin-top: -10px;
+      position: absolute;
+      bottom: 13px;
+      right: -12px;
+    }
 
-        .role {
-            width: 100%;
-            position: relative;
-            display: flex;
-            align-items: center;
-            height: 30px;
-            margin-top: -10px;
-        }
+    .role {
+      width: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 30px;
+      margin-top: -10px;
+    }
 
-        p {
-            animation: secFadeIn 2s forwards;
-            animation-delay: 3.2s;
-            opacity: 0;
-            font-weight: 400;
-            font-family: 'Lato';
-            color: #ffffff;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-        }
+    p {
+      animation: secFadeIn 2s forwards;
+      animation-delay: 3.2s;
+      opacity: 0;
+      font-weight: 400;
+      font-family: 'Lato';
+      color: #ffffff;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+    }
 
-        footer {
-            width: 350px;
-            height: 80px;
-            background: #ffb510;
-            position: absolute;
-            right: 0;
-            bottom: -80px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: top 0.8s forwards;
-            animation-delay: 4s;
-        }
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: black;
+    }
 
-        footer span {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #232323;
-            font-family: 'Poppins';
-        }
+    nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
 
-        footer i {
-            margin-right: 25px;
-            font-size: 22px;
-            color: #232323;
-            animation: icon 2s forwards;
-            animation-delay: 4s;
-            opacity: 0;
-        }
+    nav ul li {
+      --c: goldenrod;
+      color: var(--c);
+      font-size: 16px;
+      border: 0.3em solid var(--c);
+      border-radius: 0.5em;
+      width: 20em;
+      height: 3em;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-family: sans-serif;
+      letter-spacing: 0.1em;
+      text-align: center;
+      line-height: 3em;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: 0.5s;
+      margin: 1em;
+      cursor: pointer;
+    }
 
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: black;
-        }
+    nav ul li span {
+      position: absolute;
+      width: 25%;
+      height: 100%;
+      background-color: var(--c);
+      transform: translateY(150%);
+      border-radius: 50%;
+      left: calc((var(--n) - 1) * 25%);
+      transition: 0.5s;
+      transition-delay: calc((var(--n) - 1) * 0.1s);
+      z-index: -1;
+    }
 
-        nav ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
+    nav ul li:hover {
+      color: black;
+    }
 
-        nav ul li {
-            --c: goldenrod;
-            color: var(--c);
-            font-size: 16px;
-            border: 0.3em solid var(--c);
-            border-radius: 0.5em;
-            width: 20em;
-            height: 3em;
-            text-transform: uppercase;
-            font-weight: bold;
-            font-family: sans-serif;
-            letter-spacing: 0.1em;
-            text-align: center;
-            line-height: 3em;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            transition: 0.5s;
-            margin: 1em;
-        }
+    nav ul li:hover span {
+      transform: translateY(0) scale(2);
+    }
 
-        nav ul li span {
-            position: absolute;
-            width: 25%;
-            height: 100%;
-            background-color: var(--c);
-            transform: translateY(150%);
-            border-radius: 50%;
-            left: calc((var(--n) - 1) * 25%);
-            transition: 0.5s;
-            transition-delay: calc((var(--n) - 1) * 0.1s);
-            z-index: -1;
-        }
+    nav ul li span:nth-child(1) { --n: 1; }
+    nav ul li span:nth-child(2) { --n: 2; }
+    nav ul li span:nth-child(3) { --n: 3; }
+    nav ul li span:nth-child(4) { --n: 4; }
 
-        nav ul li:hover {
-            color: black;
-        }
+    .logout-btn {
+      color: #fff;
+      border: 2px solid #ffb510;
+      padding: 8px 15px;
+      margin-top: 15px;
+      border-radius: 8px;
+      background: transparent;
+      cursor: pointer;
+      transition: 0.3s;
+      font-family: 'Poppins';
+    }
 
-        nav ul li:hover span {
-            transform: translateY(0) scale(2);
-        }
-
-        nav ul li span:nth-child(1) {
-            --n: 1;
-        }
-
-        nav ul li span:nth-child(2) {
-            --n: 2;
-        }
-
-        nav ul li span:nth-child(3) {
-            --n: 3;
-        }
-
-        nav ul li span:nth-child(4) {
-            --n: 4;
-        }
-    </style>
+    .logout-btn:hover {
+      background: #ffb510;
+      color: #000;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="box">
-            <div class="title">
-                <span class="block"></span>
-                <h1>Welcome<span></span></h1>
-            </div>
+  <div class="container">
+    <div class="box">
+      <div class="title">
+        <span class="block"></span>
+        <h1>Welcome<span></span></h1>
+      </div>
 
-            <div class="role">
-                <div class="block"></div>
-                <p><span id="username"></span></p>     
-            </div>
+      <div class="role">
+        <div class="block"></div>
+        <p><span id="username"></span></p>     
+      </div>
 
-            <div style="width: 100%; margin: 0 auto; text-align: center;">
-                <nav>
-                    <ul>
-                        <li class="nav-item" data-url="https://yamenxy.github.io/Barcode_2/">Attendance</li>
-                        <li class="nav-item" data-url="https://script.google.com/macros/s/AKfycbzLEnOKhNYJmeDeDVIgluC-yXlPnrkyRgmkKw-6JUbIf8airBmaUCn1mDIedBvmnr5O/exec">Grades using website</li>
-                        <li class="nav-item" data-url="https://docs.google.com/spreadsheets/d/1gzTEmRi4CaOHvF8QdJoqwmE1PY6MJKkPkerAs6M7Yw0/edit#gid=0">Grades using Google Sheets</li>
-                        <li class="nav-item" data-url="https://script.google.com/macros/s/AKfycbwbBcLTblafDh4ATGWnUWdjW39QcGo7N7u2DLzpfm7xgXRbl8niD5AWO_R9q2-lTcxc/exec">Display Students Data</li>
-                        <li class="nav-item" data-url="https://script.google.com/macros/s/AKfycbyTmm-eLAEOwcdg7TZx0xhUE35OPA9MY6v4Xv4aBX8lzyL7k-FigMBY6zy5OV7qw8fT/exec">Send WhatsApp messages</li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
+      <div style="width: 100%; margin: 0 auto; text-align: center;">
+        <nav>
+          <ul>
+            <li class="nav-item" data-url="https://yamenxy.github.io/Barcode_2/">Attendance</li>
+            <li class="nav-item" data-url="https://script.google.com/macros/s/AKfycbzLEnOKhNYJmeDeDVIgluC-yXlPnrkyRgmkKw-6JUbIf8airBmaUCn1mDIedBvmnr5O/exec">Grades using website</li>
+            <li class="nav-item" data-url="https://docs.google.com/spreadsheets/d/1gzTEmRi4CaOHvF8QdJoqwmE1PY6MJKkPkerAs6M7Yw0/edit#gid=0">Grades using Google Sheets</li>
+            <li class="nav-item" data-url="https://script.google.com/macros/s/AKfycbwbBcLTblafDh4ATGWnUWdjW39QcGo7N7u2DLzpfm7xgXRbl8niD5AWO_R9q2-lTcxc/exec">Display Students Data</li>
+            <li class="nav-item" data-url="https://script.google.com/macros/s/AKfycbyTmm-eLAEOwcdg7TZx0xhUE35OPA9MY6v4Xv4aBX8lzyL7k-FigMBY6zy5OV7qw8fT/exec">Send WhatsApp messages</li>
+          </ul>
+        </nav>
+
+        <button class="logout-btn" id="logoutBtn" style="display:none;">Log Out</button>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // Retrieve the username from the query parameter
-        var urlParams = new URLSearchParams(window.location.search);
-        var username = urlParams.get('username');
-        document.getElementById('username').textContent = username;
+  <script>
+    // 🌟 Retrieve username from URL or from localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    let username = urlParams.get('username');
 
-        // Add event listener for all nav items
-        document.querySelectorAll('.nav-item').forEach(function(item) {
-            item.addEventListener('click', function() {
-                window.location.href = item.getAttribute('data-url');
-            });
-        });
-    </script>
+    if (username) {
+      // Save username in localStorage (Remember Me)
+      localStorage.setItem('rememberedUser', username);
+    } else {
+      // Try to load from localStorage
+      username = localStorage.getItem('rememberedUser');
+    }
+
+    // Display username if available
+    if (username) {
+      document.getElementById('username').textContent = username;
+      document.getElementById('logoutBtn').style.display = 'inline-block';
+    } else {
+      // Redirect to login page if no user found
+      alert("No user found. Please log in first.");
+      window.location.href = "login.html"; // change to your login page URL
+    }
+
+    // 🧭 Add event listener for nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        window.location.href = item.getAttribute('data-url');
+      });
+    });
+
+    // 🚪 Log out (clear Remember Me)
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('rememberedUser');
+      alert("You have been logged out.");
+      window.location.href = "login.html"; // redirect to login page
+    });
+  </script>
 </body>
 </html>
