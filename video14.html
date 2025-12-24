@@ -221,17 +221,6 @@
 </head>
 <body>
 
-<!-- 🔑 Code Input Page -->
-<div class="code-section" id="codeSection">
-    <h2>🎬 ادخل الكود الخاص بك</h2>
-    <p class="hint">من فضلك أدخل الكود لمتابعة الفيديو</p>
-    <div class="form-group">
-        <input type="text" id="studentCode" placeholder="ادخل الكود هنا">
-        <button onclick="verifyCode()">✅ تحقق من الكود</button>
-    </div>
-    <div id="message"></div>
-</div>
-
 <!-- 🌀 Loading Screen -->
 <div id="loading-screen">
     <div class="spinner-border"></div>
@@ -241,21 +230,7 @@
 <!-- 🎥 Video Page -->
 <div class="video-section" id="videoSection">
     <div class="video-sources">
-        <div class="source-item" onclick="loadVideo('pcloud')">
-            <img src="images/pcloud.png" alt="pcloud Icon">
-            <div class="source-label">pCloud</div>
-            <div class="source-resolution">FHD</div>
-        </div>
-        <div class="source-item" onclick="loadVideo('drive')">
-            <img src="images/drive.png" alt="Google Drive Icon">
-            <div class="source-label">Google Drive</div>
-            <div class="source-resolution">FHD</div>
-        </div>
-        <div class="source-item" onclick="loadVideo('mega')">
-            <img src="images/mega.png" alt="Mega Icon">
-            <div class="source-label">Mega.nz</div>
-            <div class="source-resolution">FHD</div>
-        </div>
+        <!-- sources will be injected dynamically -->
     </div>
 
     <div class="video-container">
@@ -264,65 +239,23 @@
 </div>
 
 <script>
-const VERIFY_URL = "https://script.google.com/macros/s/AKfycbyFDepsPFf75CT-n5w5KgcvBrdUCQDEVTO51XCSXU5OIiVtjyi8c4pGgZamHucQmZftVA/exec";
 const LINKS_URL = "https://script.google.com/macros/s/AKfycbzuQr-TR31WuBCCg68twVK9F-nRtCD79VaTyLLltKEFm_nMGbQKHM4kIL9mT5JXKBNV/exec";
 const PAGE_NAME = "video14";
 
-let verified = false;
 let videoLinks = {};
-
-async function verifyCode() {
-    const code = document.getElementById("studentCode").value.trim();
-    const msg = document.getElementById("message");
-
-    if (!code) {
-        msg.innerText = "⚠️ من فضلك أدخل الكود";
-        msg.style.color = "red";
-        return;
-    }
-
-    msg.innerText = "⏳ جاري التحقق...";
-    msg.style.color = "#00C9FF";
-
-    try {
-        const res = await fetch(VERIFY_URL, {
-            method: "POST",
-            body: new URLSearchParams({
-                barcode: code,
-                attendanceType: "حضور المراجعة الاولي"
-            })
-        });
-        const data = await res.json();
-
-        if (data.attendance && data.attendance[0] === "✓") {
-            verified = true;
-            msg.style.color = "lightgreen";
-            msg.innerText = "✅ تم التحقق بنجاح!";
-
-            document.getElementById("codeSection").style.display = "none";
-            document.getElementById("loading-screen").style.display = "flex";
-            await loadLinks();
-        } else {
-            msg.style.color = "red";
-            msg.innerText = "❌ لم يتم حضور هذه المحاضرة";
-        }
-    } catch (err) {
-        msg.style.color = "orange";
-        msg.innerText = "⚠️ خطأ في الاتصال بالخادم!";
-    }
-}
 
 async function loadLinks() {
     try {
+        document.getElementById("loading-screen").style.display = "flex";
+
         const res = await fetch(`${LINKS_URL}?pageName=${PAGE_NAME}`);
         videoLinks = await res.json();
 
         document.getElementById("loading-screen").style.display = "none";
         const videoSection = document.getElementById("videoSection");
         const sourcesContainer = document.querySelector(".video-sources");
-        sourcesContainer.innerHTML = ""; // clear existing buttons
+        sourcesContainer.innerHTML = "";
 
-        // 🎥 Only show sources that exist
         if (videoLinks.pcloud && videoLinks.pcloud.trim() !== "") {
             sourcesContainer.innerHTML += `
                 <div class="source-item" onclick="loadVideo('pcloud')">
@@ -350,19 +283,17 @@ async function loadLinks() {
                 </div>`;
         }
 
-        // 🟩 Show section if any links exist
         if (Object.values(videoLinks).some(link => link && link.trim() !== "")) {
             videoSection.style.display = "flex";
             setTimeout(() => videoSection.classList.add("active"), 50);
 
-            // Load the first available video automatically
+            // Load first available video
             if (videoLinks.pcloud) loadVideo('pcloud');
             else if (videoLinks.drive) loadVideo('drive');
             else if (videoLinks.mega) loadVideo('mega');
         } else {
             alert("⚠️ لا يوجد روابط فيديو متاحة لهذا الدرس حاليًا.");
         }
-
     } catch (err) {
         alert("⚠️ خطأ في تحميل روابط الفيديو");
         console.error(err);
@@ -370,11 +301,14 @@ async function loadLinks() {
 }
 
 function loadVideo(source) {
-    if (!verified || !videoLinks[source]) return;
-    const iframe = document.getElementById("video-frame");
-    iframe.src = videoLinks[source];
+    if (!videoLinks[source]) return;
+    document.getElementById("video-frame").src = videoLinks[source];
 }
+
+// 🔹 Load video links immediately on page load
+window.addEventListener('DOMContentLoaded', loadLinks);
 </script>
 
 </body>
+
 </html>
