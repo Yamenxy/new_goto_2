@@ -103,7 +103,20 @@ function validateFullName(name) {
 
 /* ==================== Phone Validation ==================== */
 function validatePhone(phone) {
-  return /^01[0-9]{9}$/.test(phone);
+  // Accept local (01XXXXXXXXX) or international (+201XXXXXXXXX / 201XXXXXXXXX)
+  const s = String(phone || '').replace(/\D/g, '');
+  // If starts with country code '20', strip it for validation
+  const local = s.replace(/^20/, '').replace(/^0+/, '');
+  return /^1[0-9]{9}$/.test(local);
+}
+
+function formatToPlus20(phone) {
+  let s = String(phone || '').replace(/\D/g, '');
+  // remove leading zeros
+  s = s.replace(/^0+/, '');
+  // remove leading country code if present
+  s = s.replace(/^20/, '');
+  return '+20' + s;
 }
 
 /* ==================== Registration Handler ==================== */
@@ -162,8 +175,12 @@ async function handleRegistration(e) {
     return;
   }
 
+  // Format phones to international +20 for comparison and submission
+  const formattedStudentPhone = formatToPlus20(studentPhone);
+  const formattedParentPhone = formatToPlus20(parentPhone);
+
   // Student phone and parent phone must not be the same
-  if (studentPhone === parentPhone) {
+  if (formattedStudentPhone === formattedParentPhone) {
     alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <span data-en="Student phone and parent phone must be different" data-ar="رقم الطالب ورقم ولي الأمر يجب أن يكونا مختلفين">Student phone and parent phone must be different</span></div>';
     return;
   }
@@ -185,8 +202,9 @@ async function handleRegistration(e) {
   const formData = new FormData();
   formData.append('studentCode', studentCode);
   formData.append('studentName', studentName);
-  formData.append('phone', studentPhone);
-  formData.append('parentPhone', parentPhone);
+  // Send phones prefixed with +20
+  formData.append('phone', formattedStudentPhone);
+  formData.append('parentPhone', formattedParentPhone);
   formData.append('center', center);
   formData.append('password', password);
 

@@ -23,6 +23,70 @@ function togglePasswordVisibility(inputId, btn) {
 }
 
 /* =========================
+   FORGOT PASSWORD
+========================= */
+document.addEventListener('DOMContentLoaded', () => {
+  // attach handlers for forgot password UI
+  const forgotLink = document.getElementById('forgotLink');
+  const forgotModal = document.getElementById('forgotModal');
+  const forgotCancel = document.getElementById('forgotCancel');
+  const forgotSubmit = document.getElementById('forgotSubmit');
+
+  if (forgotLink && forgotModal) {
+    forgotLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      forgotModal.style.display = 'flex';
+      // center modal via CSS already in place
+    });
+  }
+
+  if (forgotCancel && forgotModal) {
+    forgotCancel.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('forgotCode').value = '';
+      document.getElementById('forgotResult').innerText = '';
+      forgotModal.style.display = 'none';
+    });
+  }
+
+  if (forgotSubmit) {
+    forgotSubmit.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const code = document.getElementById('forgotCode').value.trim();
+      const phone = (document.getElementById('forgotPhone') || {}).value;
+      const parentPhone = (document.getElementById('forgotParentPhone') || {}).value;
+      const resultEl = document.getElementById('forgotResult');
+      if (!code || !phone || !parentPhone) {
+        resultEl.innerText = 'Please enter code, your phone and parent phone.';
+        return;
+      }
+
+      resultEl.innerText = 'Verifying...';
+
+      try {
+        const url = `${LOGIN_API}?action=forgotPassword&code=${encodeURIComponent(code)}&phone=${encodeURIComponent(phone)}&parentPhone=${encodeURIComponent(parentPhone)}`;
+        const resp = await fetch(url, { method: 'GET', mode: 'cors' });
+        if (!resp.ok) throw new Error('Network response not ok');
+        const data = await resp.json();
+        if (data && data.status === 'success') {
+          const pwd = data.password || '';
+          if (pwd) {
+            resultEl.innerHTML = `Password retrieved: <strong style="color:var(--primary-light);">${pwd}</strong>`;
+          } else {
+            resultEl.innerText = 'Password not available.';
+          }
+        } else {
+          resultEl.innerText = data.message || 'Verification failed or account not found.';
+        }
+      } catch (err) {
+        console.error('Forgot password error', err);
+        resultEl.innerText = 'Connection error. Try again later.';
+      }
+    });
+  }
+});
+
+/* =========================
    CHECK IF LOGGED IN
 ========================= */
 function getLoggedInUser() {
