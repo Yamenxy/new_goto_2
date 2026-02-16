@@ -2,7 +2,7 @@
    LOGIN PAGE SCRIPT - FIXED VERSION
 ========================================= */
 
-const LOGIN_API = 'https://script.google.com/macros/s/AKfycbweqUp9aza3MsipQtRjumRKLiocswbPIIZYH__R5b4FsBjYAtFGLl5AkEkhakwVI-vV/exec';
+const LOGIN_API = 'https://script.google.com/macros/s/AKfycbyc1ARUyRvini8qeLxYDi1uSZlq3fDR_mQCecq50PJcuZZLvZ337pLPGgS7Qgw3cBQjrA/exec';
 
 /* =========================
    PASSWORD VISIBILITY

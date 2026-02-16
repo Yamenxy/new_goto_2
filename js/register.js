@@ -1,5 +1,5 @@
 /* ===== Registration Page JS ===== */
-const REGISTER_API = 'https://script.google.com/macros/s/AKfycbxMqosQRUm6nepBh7LVPa1NS9p0blHh3NYMXg785Oz-mCuZ2s9XysUwpmQ7X-7z-vyH/exec';
+const REGISTER_API = 'https://script.google.com/macros/s/AKfycbyc1ARUyRvini8qeLxYDi1uSZlq3fDR_mQCecq50PJcuZZLvZ337pLPGgS7Qgw3cBQjrA/exec';
 
 let scannerRunning = false;
 

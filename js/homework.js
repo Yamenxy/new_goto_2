@@ -1,7 +1,7 @@
 /* ===== Homework Page JS ===== */
-const REGISTRATION_API = 'https://script.google.com/macros/s/AKfycbxMqosQRUm6nepBh7LVPa1NS9p0blHh3NYMXg785Oz-mCuZ2s9XysUwpmQ7X-7z-vyH/exec';
-const VIDEO_LIST_API = 'https://script.google.com/macros/s/AKfycbwQNMEz5NCkdhPd4fvK_iWhVGcDBPZY78f7Jbe_0RZB9kRSkNQk2TZmYlw9rB-P8M8T/exec';
-const VIDEO_LINKS_API = 'https://script.google.com/macros/s/AKfycbxzx44D-Lwn_Jt2ScVQJlkNHQ7LBSRw2h7odaqCEsKubdhazczMWtd0JY-03tZVTBw/exec';
+const REGISTRATION_API = 'https://script.google.com/macros/s/AKfycbyc1ARUyRvini8qeLxYDi1uSZlq3fDR_mQCecq50PJcuZZLvZ337pLPGgS7Qgw3cBQjrA/exec';
+const VIDEO_LIST_API = 'https://script.google.com/macros/s/AKfycbwfPtK-dCKZqWpTGJZm_uK5IisZ6UdB9jG3bLcsuMm3BKm3n1wJsr07WIZCFV-iJObS/exec';
+const VIDEO_LINKS_API = 'https://script.google.com/macros/s/AKfycbzuQr-TR31WuBCCg68twVK9F-nRtCD79VaTyLLltKEFm_nMGbQKHM4kIL9mT5JXKBNV/exec';
 
 let studentAttendance = {};
 let allVideos = [];
@@ -189,7 +189,44 @@ function renderHomeworkCards() {
     `;
     grid.appendChild(card);
   });
+  // Prefetch links for available videos in background to reduce wait when user clicks
+  try {
+    const pageNames = availableVideos.map(v => 'video' + (v._index + 1));
+    // don't await - run in background
+    prefetchVideoLinks(pageNames);
+  } catch (e) {}
   updateLanguage();
+}
+
+// Prefetch video links for a list of page names with limited concurrency
+function prefetchVideoLinks(pageNames) {
+  if (!Array.isArray(pageNames) || pageNames.length === 0) return;
+  const concurrency = 3;
+  const queue = pageNames.slice();
+
+  async function worker() {
+    while (queue.length) {
+      const pageName = queue.shift();
+      if (!pageName) break;
+      if (videoLinksCache[pageName]) continue; // already cached
+      try {
+        const resp = await fetch(`${VIDEO_LINKS_API}?pageName=${encodeURIComponent(pageName)}`, { credentials: 'omit', redirect: 'follow' });
+        if (!resp.ok) continue;
+        const links = await resp.json();
+        // store only non-empty links to avoid overwriting good cache with empty
+        if (links && (links.drive || links.pcloud || links.mega)) {
+          videoLinksCache[pageName] = links;
+        }
+      } catch (err) {
+        // ignore individual failures
+      }
+      // small delay between requests to be polite
+      await new Promise(r => setTimeout(r, 200));
+    }
+  }
+
+  // launch workers (no await)
+  for (let i = 0; i < concurrency; i++) worker();
 }
 
 /* ===== Load video links then show source picker ===== */
