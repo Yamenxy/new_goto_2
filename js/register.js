@@ -223,16 +223,14 @@ async function handleRegistration(e) {
       alertEl.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> <span data-en="Registration successful!" data-ar="تم التسجيل بنجاح!">Registration successful!</span></div>';
       showToast('تم التسجيل بنجاح!', 'success');
 
-      // Auto-login
-      const userData = {
-        studentName,
-        studentCode,
-        studentPhone,
-        parentPhone,
-        center,
-        timestamp: new Date().toISOString()
-      };
-      loginUser(userData);
+      // Auto-login: fetch real user data from backend
+      try {
+        const loginResp = await fetch(`${REGISTER_API}?action=login&code=${encodeURIComponent(studentCode)}&password=${encodeURIComponent(password)}`);
+        const loginData = await loginResp.json();
+        if (loginData.status === 'success' && loginData.data) {
+          localStorage.setItem('loggedInUser', JSON.stringify(loginData.data));
+        }
+      } catch {}
       setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
     }
   } catch (err) {

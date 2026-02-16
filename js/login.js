@@ -1,8 +1,18 @@
-// Password visibility toggle for login.html
+/* =========================================
+   LOGIN PAGE SCRIPT - FIXED VERSION
+========================================= */
+
+const LOGIN_API = 'https://script.google.com/macros/s/AKfycbweqUp9aza3MsipQtRjumRKLiocswbPIIZYH__R5b4FsBjYAtFGLl5AkEkhakwVI-vV/exec';
+
+/* =========================
+   PASSWORD VISIBILITY
+========================= */
 function togglePasswordVisibility(inputId, btn) {
   const input = document.getElementById(inputId);
   if (!input) return;
+
   const icon = btn.querySelector('i');
+
   if (input.type === 'password') {
     input.type = 'text';
     if (icon) icon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -11,98 +21,138 @@ function togglePasswordVisibility(inputId, btn) {
     if (icon) icon.classList.replace('fa-eye-slash', 'fa-eye');
   }
 }
-/* ===== Login Page JS ===== */
-const LOGIN_API = 'https://script.google.com/macros/s/AKfycbxMqosQRUm6nepBh7LVPa1NS9p0blHh3NYMXg785Oz-mCuZ2s9XysUwpmQ7X-7z-vyH/exec';
 
+/* =========================
+   CHECK IF LOGGED IN
+========================= */
+function getLoggedInUser() {
+  try {
+    return JSON.parse(localStorage.getItem('loggedInUser'));
+  } catch {
+    return null;
+  }
+}
+
+function loginUser(userData) {
+  localStorage.setItem('loggedInUser', JSON.stringify(userData));
+}
+
+/* =========================
+   INIT
+========================= */
 document.addEventListener('DOMContentLoaded', () => {
-  // If already logged in, redirect to profile
+
+  // لو مسجل دخول بالفعل
   const user = getLoggedInUser();
   if (user) {
     window.location.href = 'profile.html';
     return;
   }
+
   initLoginForm();
 });
 
+/* =========================
+   LOGIN FORM
+========================= */
 function initLoginForm() {
+
   const form = document.getElementById('loginForm');
   if (!form) return;
 
-  // Password toggle
-  const toggleBtn = form.querySelector('.password-toggle');
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => {
-      const input = toggleBtn.previousElementSibling;
-      const icon = toggleBtn.querySelector('i');
-      if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.replace('fa-eye', 'fa-eye-slash');
-      } else {
-        input.type = 'password';
-        icon.classList.replace('fa-eye-slash', 'fa-eye');
-      }
-    });
-  }
-
   form.addEventListener('submit', async (e) => {
+
     e.preventDefault();
+
     const alertEl = document.getElementById('formAlert');
     const submitBtn = form.querySelector('button[type="submit"]');
 
-    const code = form.querySelector('#loginCode').value.trim();
-    const password = form.querySelector('#loginPassword').value;
+    const code = document.getElementById('loginCode').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
 
+    /* ===== VALIDATION ===== */
     if (!code || !password) {
       if (alertEl) {
-        alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <span data-en="Please fill all fields" data-ar="يرجى ملء جميع الحقول">Please fill all fields</span></div>';
+        alertEl.innerHTML =
+          '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Please fill all fields</div>';
         alertEl.style.display = 'block';
       }
       return;
     }
 
+    /* ===== LOADING STATE ===== */
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span data-en="Logging in..." data-ar="جاري الدخول...">Logging in...</span>';
+    submitBtn.innerHTML =
+      '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
     if (alertEl) {
       alertEl.innerHTML = '';
       alertEl.style.display = 'none';
     }
 
-    // Timeout helper
-    function fetchWithTimeout(resource, options = {}) {
-      const { timeout = 2000 } = options;
-      return Promise.race([
-        fetch(resource, options),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
-      ]);
-    }
-
     try {
+
       const url = `${LOGIN_API}?action=login&code=${encodeURIComponent(code)}&password=${encodeURIComponent(password)}`;
-      const response = await fetchWithTimeout(url, { credentials: 'omit', redirect: 'follow', timeout: 2000 });
+
+      console.log("Sending request to:", url);
+
+const response = await fetch(url, {
+  method: "GET",
+  mode: "cors"
+});
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
       const data = await response.json();
 
+      console.log("LOGIN RESPONSE:", data);
+
+      /* ===== SUCCESS ===== */
       if (data.status === 'success' && data.data) {
+
         loginUser(data.data);
-        showToast('Login successful!', 'success');
+
         if (alertEl) {
-          alertEl.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> <span data-en="Login successful!" data-ar="تم الدخول بنجاح!">Login successful!</span></div>';
+          alertEl.innerHTML =
+            '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Login successful!</div>';
           alertEl.style.display = 'block';
         }
-        setTimeout(() => { window.location.href = 'profile.html'; }, 1000);
+
+        setTimeout(() => {
+          window.location.href = 'profile.html';
+        }, 1000);
+
       } else {
+
+        /* ===== ERROR FROM SERVER ===== */
         if (alertEl) {
-          alertEl.innerHTML = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> ${data.message || '<span data-en="Invalid code or password" data-ar="الكود أو كلمة المرور غير صحيحة">Invalid code or password</span>'}</div>`;
+          alertEl.innerHTML =
+            `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> ${data.message || "Invalid code or password"}</div>`;
           alertEl.style.display = 'block';
         }
+
       }
-    } catch (err) {
+
+    } catch (error) {
+
+      console.error("LOGIN ERROR:", error);
+
       if (alertEl) {
-        alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <span data-en="Connection error or timeout. Please try again." data-ar="خطأ في الاتصال أو انتهى الوقت. حاول مرة أخرى.">Connection error or timeout. Please try again.</span></div>';
+        alertEl.innerHTML =
+          '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Connection error. Please try again.</div>';
         alertEl.style.display = 'block';
       }
+
     } finally {
+
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span data-en="Login" data-ar="دخول">Login</span>';
+      submitBtn.innerHTML =
+        '<i class="fas fa-sign-in-alt"></i> Login';
+
     }
+
   });
+
 }

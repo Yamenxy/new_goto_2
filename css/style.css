@@ -126,6 +126,12 @@ img { max-width: 100%; display: block; }
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
+/* Logo image in navbar */
+.site-logo {
+  width: 44px; height: 44px; object-fit: contain; border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+}
+
 .nav-links { display: flex; align-items: center; gap: 8px; }
 
 .nav-link {
@@ -300,37 +306,41 @@ img { max-width: 100%; display: block; }
 /* Team */
 .team-section { padding: 100px 0; }
 
-.team-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px;
-}
+ .team-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px;
+ }
 
-.team-card {
-  background: var(--glass); border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg); padding: 25px 15px;
-  text-align: center; transition: var(--transition);
+ .team-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 22px; padding: 36px 20px;
+  text-align: center; transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
 }
-.team-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+.team-card:hover { transform: translateY(-8px); border-color: rgba(108,92,231,0.6); box-shadow: 0 18px 50px rgba(0,0,0,0.55); }
 
-.team-avatar {
-  width: 80px; height: 80px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 15px; font-size: 1.5rem; color: var(--white);
-  overflow: hidden;
+ .team-avatar {
+  width: 110px; height: 110px; border-radius: 50%; overflow: hidden;
+  margin: 0 auto 16px; position: relative; border: 6px solid rgba(255,255,255,0.03);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
 }
-.team-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.team-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.team-card h4 { color: var(--white); font-size: 0.95rem; margin-bottom: 4px; }
-.team-card .team-role { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px; }
+/* Tweak teacher avatar (first card) for better crop and presence */
+.team-section .team-card:first-child .team-avatar { width: 130px; height: 130px; border: 6px solid rgba(108,92,231,0.12); box-shadow: 0 14px 40px rgba(0,0,0,0.6); }
+.team-section .team-card:first-child .team-avatar img { object-position: 50% 22%; }
 
-.team-social { display: flex; justify-content: center; gap: 8px; }
-.team-social a {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: var(--glass); border: 1px solid var(--glass-border);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-muted); font-size: 0.8rem; transition: var(--transition);
+ .team-card h4 { color: var(--white); font-size: 1.1rem; margin-bottom: 6px; font-weight: 800; }
+ .team-card .team-role { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px; }
+
+ .team-social { display: flex; justify-content: center; gap: 12px; margin-top: 6px; }
+ .team-social a {
+  width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03);
+  color: var(--text-muted); font-size: 0.9rem; transition: all 0.25s ease;
 }
-.team-social a:hover { background: var(--primary); color: var(--white); border-color: var(--primary); }
+ .team-social a:hover { transform: translateY(-4px); background: rgba(255,255,255,0.04); color: var(--white); border-color: rgba(108,92,231,0.6); box-shadow: 0 10px 30px rgba(108,92,231,0.12); }
 
 /* ============================
    PAGE HERO (SUB-PAGES)
