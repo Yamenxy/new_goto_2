@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sections - Mr. Ahmed Mohie Physics</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>if(!localStorage.getItem('loggedInUser'))window.location.replace('register.html');</script>
+</head>
+<body>
+  <!-- Loader -->
+  <div id="loader">
+    <div class="loader-content">
+      <div class="atom-loader"><div class="electron"></div><div class="electron"></div><div class="electron"></div><div class="nucleus"></div></div>
+      <p data-en="Loading..." data-ar="جاري التحميل...">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><i class="fas fa-atom"></i><span data-en="Mr. Ahmed Mohie" data-ar="أ. أحمد محي">Mr. Ahmed Mohie</span></a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html" class="nav-link" data-en="Home" data-ar="الرئيسية">Home</a>
+        <a href="index.html#about" class="nav-link" data-en="About" data-ar="من نحن">About</a>
+        <a href="index.html#team" class="nav-link" data-en="Team" data-ar="الفريق">Team</a>
+        <span class="nav-auth" id="navAuth"></span>
+        <a href="homework.html" class="nav-link nav-btn" data-en="Homework" data-ar="الواجب"><i class="fas fa-book-open"></i> Homework</a>
+        <a href="sections.html" class="nav-link nav-btn btn-secondary active" data-en="Sections" data-ar="الحصص"><i class="fas fa-play-circle"></i> Sections</a>
+      </div>
+      <div class="nav-actions">
+        <button class="lang-toggle" id="langToggle" onclick="toggleLanguage()"><i class="fas fa-globe"></i><span id="langText">عربي</span></button>
+        <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Coming Soon Section -->
+  <section class="coming-soon-section">
+    <div class="coming-soon-bg">
+      <div class="cs-particle"></div>
+      <div class="cs-particle"></div>
+      <div class="cs-particle"></div>
+      <div class="cs-particle"></div>
+      <div class="cs-particle"></div>
+      <div class="cs-particle"></div>
+    </div>
+    <div class="coming-soon-container">
+      <div class="cs-icon-wrapper">
+        <div class="cs-icon-ring"></div>
+        <i class="fas fa-play-circle cs-icon"></i>
+      </div>
+      <h1 class="cs-title" data-en="Coming Soon" data-ar="قريبًا">Coming Soon</h1>
+      <p class="cs-subtitle" data-en="Section Recordings" data-ar="تسجيلات الحصص">Section Recordings</p>
+      <div class="cs-divider"></div>
+      <p class="cs-description" data-en="We're preparing amazing section recordings for you. Stay tuned for high-quality physics lessons that will help you master every concept!" data-ar="نحن نجهز تسجيلات حصص مذهلة لك. ترقب دروس فيزياء عالية الجودة ستساعدك على إتقان كل مفهوم!">We're preparing amazing section recordings for you. Stay tuned for high-quality physics lessons that will help you master every concept!</p>
+      <div class="cs-features">
+        <div class="cs-feature">
+          <i class="fas fa-video"></i>
+          <span data-en="HD Recordings" data-ar="تسجيلات عالية الجودة">HD Recordings</span>
+        </div>
+        <div class="cs-feature">
+          <i class="fas fa-lock"></i>
+          <span data-en="Password Protected" data-ar="محمية بكلمة مرور">Password Protected</span>
+        </div>
+        <div class="cs-feature">
+          <i class="fas fa-clock"></i>
+          <span data-en="Watch Anytime" data-ar="شاهد في أي وقت">Watch Anytime</span>
+        </div>
+      </div>
+      <a href="index.html" class="cs-btn" data-en="Back to Home" data-ar="العودة للرئيسية"><i class="fas fa-home"></i> Back to Home</a>
+    </div>
+  </section>
+
+  <style>
+    .coming-soon-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 120px 20px 60px;
+    }
+    .coming-soon-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .cs-particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(124, 58, 237, 0.15);
+      animation: csFloat 8s ease-in-out infinite;
+    }
+    .cs-particle:nth-child(1) { width: 300px; height: 300px; top: -80px; left: -100px; animation-delay: 0s; }
+    .cs-particle:nth-child(2) { width: 200px; height: 200px; top: 60%; right: -60px; animation-delay: 2s; background: rgba(16, 185, 129, 0.1); }
+    .cs-particle:nth-child(3) { width: 150px; height: 150px; bottom: 10%; left: 20%; animation-delay: 4s; }
+    .cs-particle:nth-child(4) { width: 100px; height: 100px; top: 30%; right: 25%; animation-delay: 1s; background: rgba(16, 185, 129, 0.12); }
+    .cs-particle:nth-child(5) { width: 250px; height: 250px; bottom: -80px; right: 30%; animation-delay: 3s; }
+    .cs-particle:nth-child(6) { width: 80px; height: 80px; top: 20%; left: 30%; animation-delay: 5s; background: rgba(124, 58, 237, 0.2); }
+    @keyframes csFloat {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+      50% { transform: translateY(-30px) scale(1.1); opacity: 1; }
+    }
+    .coming-soon-container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 600px;
+      background: rgba(15, 15, 35, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      border-radius: 24px;
+      padding: 50px 40px;
+      animation: csFadeUp 0.8s ease-out;
+    }
+    @keyframes csFadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .cs-icon-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .cs-icon {
+      font-size: 4rem;
+      background: linear-gradient(135deg, #7c3aed, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+    }
+    .cs-icon-ring {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 2px solid rgba(124, 58, 237, 0.3);
+      animation: csRing 3s ease-in-out infinite;
+    }
+    @keyframes csRing {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+    .cs-title {
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 0%, #c4b5fd 50%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+    .cs-subtitle {
+      font-size: 1.2rem;
+      color: #a78bfa;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .cs-divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #7c3aed, #10b981);
+      margin: 0 auto 25px;
+      border-radius: 2px;
+    }
+    .cs-description {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 35px;
+    }
+    .cs-features {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      flex-wrap: wrap;
+      margin-bottom: 35px;
+    }
+    .cs-feature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 15px 20px;
+      background: rgba(124, 58, 237, 0.1);
+      border: 1px solid rgba(124, 58, 237, 0.15);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      min-width: 130px;
+    }
+    .cs-feature:hover {
+      background: rgba(124, 58, 237, 0.2);
+      border-color: rgba(124, 58, 237, 0.4);
+      transform: translateY(-4px);
+    }
+    .cs-feature i {
+      font-size: 1.5rem;
+      color: #10b981;
+    }
+    .cs-feature span {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+    }
+    .cs-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .cs-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    }
+    @media (max-width: 600px) {
+      .coming-soon-container { padding: 35px 24px; }
+      .cs-title { font-size: 2.2rem; }
+      .cs-subtitle { font-size: 1rem; }
+      .cs-features { gap: 12px; }
+      .cs-feature { min-width: 100px; padding: 12px 14px; }
+    }
+  </style>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <h3><i class="fas fa-atom"></i> <span data-en="Mr. Ahmed Mohie" data-ar="أ. أحمد محي">Mr. Ahmed Mohie</span></h3>
+          <p data-en="Physics Teacher - Making Physics Simple & Fun" data-ar="مدرس فيزياء - نجعل الفيزياء بسيطة وممتعة">Physics Teacher - Making Physics Simple & Fun</p>
+        </div>
+        <div class="footer-links">
+          <a href="index.html" data-en="Home" data-ar="الرئيسية">Home</a>
+          <a href="register.html" data-en="Register" data-ar="التسجيل">Register</a>
+          <a href="homework.html" data-en="Homework" data-ar="الواجب">Homework</a>
+          <a href="sections.html" data-en="Sections" data-ar="الحصص">Sections</a>
+        </div>
+        <div class="footer-social">
+          <a href="https://api.whatsapp.com/send/?phone=%2B201288449598" class="social-link whatsapp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.facebook.com/share/aLnUsKV1Sk315EAJ/?mibextid=qi2Omg" class="social-link facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/ahmedmohie97" class="social-link instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Mr. Ahmed Mohie. <span data-en="All rights reserved." data-ar="جميع الحقوق محفوظة.">All rights reserved.</span></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
