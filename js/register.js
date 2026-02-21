@@ -103,6 +103,23 @@ function startScanner() {
     try {
       if (!result || !result.codeResult || !result.codeResult.code) return;
       const code = String(result.codeResult.code).trim();
+
+      // Only accept exactly 5 numeric digits
+      if (!/^\d{5}$/.test(code)) {
+        try {
+          const badge = document.querySelector('#scannerArea .scan-confirm-badge');
+          if (badge) {
+            badge.textContent = 'Invalid: expect 5 digits';
+            setTimeout(() => { if (badge) badge.textContent = ''; }, 1200);
+          }
+        } catch (ex) {}
+        // Reset confirmation state for anything not matching expected format
+        _lastDetectedCode = null;
+        _lastDetectedCount = 0;
+        _lastDetectedTime = 0;
+        return;
+      }
+
       const now = Date.now();
       const CONFIRM_THRESHOLD = 3; // number of identical reads required
       const TIME_WINDOW = 2000; // ms window to accumulate reads
