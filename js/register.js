@@ -2,6 +2,10 @@
 const REGISTER_API = 'https://script.google.com/macros/s/AKfycbyc1ARUyRvini8qeLxYDi1uSZlq3fDR_mQCecq50PJcuZZLvZ337pLPGgS7Qgw3cBQjrA/exec';
 
 let scannerRunning = false;
+// Detection confirmation state to reduce false positives
+let _lastDetectedCode = null;
+let _lastDetectedCount = 0;
+let _lastDetectedTime = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
   // If already logged in, redirect to profile
@@ -40,6 +44,28 @@ function startScanner() {
   startBtn.style.display = 'none';
   stopBtn.style.display = 'inline-flex';
 
+  // create or reset a confirmation badge to show detection progress
+  let confirmBadge = scannerEl.querySelector('.scan-confirm-badge');
+  if (!confirmBadge) {
+    confirmBadge = document.createElement('div');
+    confirmBadge.className = 'scan-confirm-badge';
+    Object.assign(confirmBadge.style, {
+      position: 'absolute',
+      right: '10px',
+      top: '10px',
+      padding: '6px 10px',
+      background: 'rgba(0,0,0,0.6)',
+      color: '#fff',
+      borderRadius: '8px',
+      fontSize: '13px',
+      zIndex: 9999,
+      pointerEvents: 'none'
+    });
+    scannerEl.style.position = 'relative';
+    scannerEl.appendChild(confirmBadge);
+  }
+  confirmBadge.textContent = '';
+
   if (typeof Quagga === 'undefined') {
     showToast('Scanner library not loaded', 'error');
     return;
@@ -50,10 +76,17 @@ function startScanner() {
       name: "Live",
       type: "LiveStream",
       target: scannerEl,
-      constraints: { facingMode: "environment", width: 480, height: 320 }
+      constraints: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }
     },
+    locator: {
+      patchSize: "medium",
+      halfSample: false
+    },
+    numOfWorkers: (navigator.hardwareConcurrency || 2),
+    frequency: 10,
     decoder: {
-      readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "upc_reader", "i2of5_reader"]
+      readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "upc_reader", "i2of5_reader"],
+      multiple: false
     }
   }, (err) => {
     if (err) {
@@ -65,11 +98,43 @@ function startScanner() {
     scannerRunning = true;
   });
 
+  // Require multiple consistent detections before accepting the code
   Quagga.onDetected((result) => {
-    const code = result.codeResult.code;
-    document.getElementById('studentCode').value = code;
-    stopScanner();
-    showToast('تم مسح الكود: ' + code, 'success');
+    try {
+      if (!result || !result.codeResult || !result.codeResult.code) return;
+      const code = String(result.codeResult.code).trim();
+      const now = Date.now();
+      const CONFIRM_THRESHOLD = 3; // number of identical reads required
+      const TIME_WINDOW = 2000; // ms window to accumulate reads
+
+      if (code === _lastDetectedCode && (now - _lastDetectedTime) < TIME_WINDOW) {
+        _lastDetectedCount++;
+      } else {
+        _lastDetectedCode = code;
+        _lastDetectedCount = 1;
+      }
+      _lastDetectedTime = now;
+
+      // update badge with progress if present
+      try {
+        const badge = document.querySelector('#scannerArea .scan-confirm-badge');
+        if (badge) badge.textContent = `Confirming: ${_lastDetectedCount}/${CONFIRM_THRESHOLD}`;
+      } catch (ex) {}
+
+      if (_lastDetectedCount >= CONFIRM_THRESHOLD) {
+        document.getElementById('studentCode').value = code;
+        // reset confirmation state
+        _lastDetectedCode = null;
+        _lastDetectedCount = 0;
+        _lastDetectedTime = 0;
+        // clear badge
+        try { const b = document.querySelector('#scannerArea .scan-confirm-badge'); if (b) b.textContent = ''; } catch(e){}
+        stopScanner();
+        showToast('تم مسح الكود: ' + code, 'success');
+      }
+    } catch (e) {
+      // ignore detection parsing errors
+    }
   });
 }
 
@@ -80,6 +145,8 @@ function stopScanner() {
   }
   const scannerEl = document.getElementById('scannerArea');
   if (scannerEl) scannerEl.style.display = 'none';
+  // clear any confirmation badge
+  try { const b = document.querySelector('#scannerArea .scan-confirm-badge'); if (b) b.remove(); } catch(e){}
   const startBtn = document.getElementById('startScanBtn');
   const stopBtn = document.getElementById('stopScanBtn');
   if (startBtn) startBtn.style.display = 'inline-flex';
