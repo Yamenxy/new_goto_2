@@ -44,115 +44,99 @@ function startScanner() {
   startBtn.style.display = 'none';
   stopBtn.style.display = 'inline-flex';
 
-  // create or reset a confirmation badge to show detection progress
-  let confirmBadge = scannerEl.querySelector('.scan-confirm-badge');
-  if (!confirmBadge) {
-    confirmBadge = document.createElement('div');
-    confirmBadge.className = 'scan-confirm-badge';
-    Object.assign(confirmBadge.style, {
-      position: 'absolute',
-      right: '10px',
-      top: '10px',
-      padding: '6px 10px',
-      background: 'rgba(0,0,0,0.6)',
-      color: '#fff',
-      borderRadius: '8px',
-      fontSize: '13px',
-      zIndex: 9999,
-      pointerEvents: 'none'
-    });
-    scannerEl.style.position = 'relative';
-    scannerEl.appendChild(confirmBadge);
-  }
-  confirmBadge.textContent = '';
-
   if (typeof Quagga === 'undefined') {
     showToast('Scanner library not loaded', 'error');
     return;
   }
+  // If a previous instance is running, stop it first to avoid duplicate handlers
+  try { if (scannerRunning && typeof Quagga !== 'undefined') Quagga.stop(); } catch (e) {}
+  // Remove any previous onDetected handler if supported
+  try { if (Quagga && typeof Quagga.offDetected === 'function') Quagga.offDetected(); } catch (e) {}
 
-  Quagga.init({
-    inputStream: {
-      name: "Live",
-      type: "LiveStream",
-      target: scannerEl,
-      constraints: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }
+  // Warn when not served over HTTPS (camera access may be blocked by browser)
+  if (location.protocol === 'http:' && location.hostname !== 'localhost') {
+    showToast('Camera may be blocked: serve the site over HTTPS or use localhost', 'warning');
+  }
+
+  // Try multiple configs in sequence to avoid OverconstrainedError
+  const tryConfigs = [
+    // Preferred: environment camera, reasonable ideal size
+    {
+      inputStream: { name: "Live", type: "LiveStream", target: scannerEl, constraints: { facingMode: "environment", width: { ideal: 640 }, height: { ideal: 480 } } },
+      locator: { patchSize: "medium", halfSample: true },
+      numOfWorkers: (navigator.hardwareConcurrency || 2),
+      decoder: { readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "upc_reader", "i2of5_reader"] },
+      locate: true
     },
-    locator: {
-      patchSize: "medium",
-      halfSample: false
+    // Relax size constraints
+    {
+      inputStream: { name: "Live", type: "LiveStream", target: scannerEl, constraints: { facingMode: "environment" } },
+      locator: { patchSize: "large", halfSample: true },
+      numOfWorkers: 1,
+      decoder: { readers: ["code_128_reader", "ean_reader", "code_39_reader"] },
+      locate: true
     },
-    numOfWorkers: (navigator.hardwareConcurrency || 2),
-    frequency: 10,
-    decoder: {
-      readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "upc_reader", "i2of5_reader"],
-      multiple: false
+    // Final fallback: no facingMode (lets browser choose), minimal work
+    {
+      inputStream: { name: "Live", type: "LiveStream", target: scannerEl },
+      locator: { patchSize: "large", halfSample: true },
+      numOfWorkers: 1,
+      decoder: { readers: ["code_128_reader"] },
+      locate: true
     }
-  }, (err) => {
-    if (err) {
-      showToast('Camera error: ' + err.message, 'error');
+  ];
+
+  const initQuagga = (configs, idx = 0) => {
+    if (idx >= configs.length) {
+      showToast('Camera error: No compatible camera constraints found', 'error');
       stopScanner();
       return;
     }
-    Quagga.start();
-    scannerRunning = true;
-  });
-
-  // Require multiple consistent detections before accepting the code
-  Quagga.onDetected((result) => {
-    try {
-      if (!result || !result.codeResult || !result.codeResult.code) return;
-      const code = String(result.codeResult.code).trim();
-
-      // Only accept exactly 5 numeric digits
-      if (!/^\d{5}$/.test(code)) {
-        try {
-          const badge = document.querySelector('#scannerArea .scan-confirm-badge');
-          if (badge) {
-            badge.textContent = 'Invalid: expect 5 digits';
-            setTimeout(() => { if (badge) badge.textContent = ''; }, 1200);
-          }
-        } catch (ex) {}
-        // Reset confirmation state for anything not matching expected format
-        _lastDetectedCode = null;
-        _lastDetectedCount = 0;
-        _lastDetectedTime = 0;
+    const cfgAttempt = configs[idx];
+    Quagga.init(cfgAttempt, (err) => {
+      if (err) {
+        console.warn('Quagga init attempt failed', idx, err && err.name);
+        // If OverconstrainedError, try the next, otherwise show error
+        if (err && (err.name === 'OverconstrainedError' || err.name === 'ConstraintNotSatisfiedError' || err.constraint)) {
+          initQuagga(configs, idx + 1);
+          return;
+        }
+        console.error('Quagga init error', err);
+        const msg = err && err.name ? `${err.name}: ${err.message || ''}` : 'Camera error';
+        showToast('Camera error: ' + msg, 'error');
+        stopScanner();
         return;
       }
-
-      const now = Date.now();
-      const CONFIRM_THRESHOLD = 3; // number of identical reads required
-      const TIME_WINDOW = 2000; // ms window to accumulate reads
-
-      if (code === _lastDetectedCode && (now - _lastDetectedTime) < TIME_WINDOW) {
-        _lastDetectedCount++;
-      } else {
-        _lastDetectedCode = code;
-        _lastDetectedCount = 1;
-      }
-      _lastDetectedTime = now;
-
-      // update badge with progress if present
       try {
-        const badge = document.querySelector('#scannerArea .scan-confirm-badge');
-        if (badge) badge.textContent = `Confirming: ${_lastDetectedCount}/${CONFIRM_THRESHOLD}`;
-      } catch (ex) {}
+        Quagga.start();
+        scannerRunning = true;
+      } catch (startErr) {
+        console.error('Quagga start failed', startErr);
+        showToast('Unable to start scanner', 'error');
+        stopScanner();
+      }
+    });
+  };
 
-      if (_lastDetectedCount >= CONFIRM_THRESHOLD) {
+  initQuagga(tryConfigs);
+
+  // Single detection handler — unregister previous to avoid duplicates
+  const onDetectedHandler = (result) => {
+    try {
+      const code = result && result.codeResult && result.codeResult.code;
+      if (code) {
         document.getElementById('studentCode').value = code;
-        // reset confirmation state
-        _lastDetectedCode = null;
-        _lastDetectedCount = 0;
-        _lastDetectedTime = 0;
-        // clear badge
-        try { const b = document.querySelector('#scannerArea .scan-confirm-badge'); if (b) b.textContent = ''; } catch(e){}
         stopScanner();
         showToast('تم مسح الكود: ' + code, 'success');
       }
-    } catch (e) {
-      // ignore detection parsing errors
-    }
-  });
+    } catch (e) { console.error('onDetected handler error', e); }
+  };
+
+  if (typeof Quagga.onDetected === 'function') {
+    Quagga.onDetected(onDetectedHandler);
+  } else if (typeof Quagga.addListener === 'function') {
+    Quagga.addListener('detected', onDetectedHandler);
+  }
 }
 
 function stopScanner() {
@@ -162,14 +146,11 @@ function stopScanner() {
   }
   const scannerEl = document.getElementById('scannerArea');
   if (scannerEl) scannerEl.style.display = 'none';
-  // clear any confirmation badge
-  try { const b = document.querySelector('#scannerArea .scan-confirm-badge'); if (b) b.remove(); } catch(e){}
   const startBtn = document.getElementById('startScanBtn');
   const stopBtn = document.getElementById('stopScanBtn');
   if (startBtn) startBtn.style.display = 'inline-flex';
   if (stopBtn) stopBtn.style.display = 'none';
 }
-
 /* ==================== Name Validation ==================== */
 function isArabicName(name) {
   // Allow Arabic letters, spaces, and common diacritics only
