@@ -1,18 +1,11 @@
-/* ===== Homework Page JS ==== */
-// Attendance sheet layou: A=وقت التسجيل, B=الكود, C=الاسم, H=الحضور الاول ...
-const REGISTRATION_API = 'https://script.google.com/macros/s/AKfycbz4UgdIBQS0Ndc-xWTozbHeifftc371o6qE5t9fyBznSx_kHRHc2HNyIDFHPbfYxulCJg/exec';
+/* ===== Homework Page JS ===== */
+const REGISTRATION_API = 'https://script.google.com/macros/s/AKfycbyc1ARUyRvini8qeLxYDi1uSZlq3fDR_mQCecq50PJcuZZLvZ337pLPGgS7Qgw3cBQjrA/exec';
 const VIDEO_LIST_API = 'https://script.google.com/macros/s/AKfycbwfPtK-dCKZqWpTGJZm_uK5IisZ6UdB9jG3bLcsuMm3BKm3n1wJsr07WIZCFV-iJObS/exec';
 const VIDEO_LINKS_API = 'https://script.google.com/macros/s/AKfycbzuQr-TR31WuBCCg68twVK9F-nRtCD79VaTyLLltKEFm_nMGbQKHM4kIL9mT5JXKBNV/exec';
 
 let studentAttendance = {};
 let allVideos = [];
 let videoLinksCache = {};  // cache: { "video1": { drive, pcloud, mega } }
-
-function refreshHomeworkLanguage() {
-  if (typeof setLanguage === 'function') {
-    setLanguage(localStorage.getItem('lang') || 'en');
-  }
-}
 
 /* ===== On page load: auto-check for logged-in user ===== */
 document.addEventListener('DOMContentLoaded', () => {
@@ -58,7 +51,7 @@ async function autoLoadHomework(code, displayName) {
       msgEl.textContent = 'No attendance records found. Attend a lecture to unlock homework.';
       msgEl.setAttribute('data-en', 'No attendance records found. Attend a lecture to unlock homework.');
       msgEl.setAttribute('data-ar', 'لا يوجد سجل حضور. احضر محاضرة لفتح الواجبات.');
-      refreshHomeworkLanguage();
+      updateLanguage();
       return;
     }
 
@@ -77,7 +70,7 @@ async function autoLoadHomework(code, displayName) {
     msgEl.textContent = 'Failed to load homework. Please refresh the page.';
     msgEl.setAttribute('data-en', 'Failed to load homework. Please refresh the page.');
     msgEl.setAttribute('data-ar', 'فشل تحميل الواجبات. يرجى تحديث الصفحة.');
-    refreshHomeworkLanguage();
+    updateLanguage();
   }
 }
 
@@ -128,28 +121,11 @@ async function fetchAttendance(code) {
   );
   const data = await resp.json();
 
-  if (data && Array.isArray(data.attendance)) {
-    studentAttendance = {};
+  if (data.status === 'success' && data.attendance) {
+    // data.attendance = [{name, present, value}, ...]
     data.attendance.forEach((item, i) => {
-      let isPresent = false;
-      let attendanceKey = String(i + 1);
-
-      if (typeof item === 'object' && item !== null) {
-        isPresent = item.present === true || item.present === 'true' || item.present === 'TRUE' || item.present === 'حاضر' || item.present === '✓';
-        if (item.pageName) attendanceKey = String(item.pageName).trim();
-        else if (item.videoName) attendanceKey = String(item.videoName).trim();
-        else if (item.name) attendanceKey = String(item.name).trim();
-        else if (item.value) attendanceKey = String(item.value).trim();
-      } else {
-        isPresent = item === true || item === 'true' || item === 'TRUE' || item === 'حاضر' || item === '✓' || item === 1 || item === '1';
-      }
-
-      studentAttendance[attendanceKey] = isPresent;
-      studentAttendance[i] = isPresent;
-      studentAttendance[String(i + 1)] = isPresent;
+      studentAttendance[i] = item.present === true;
     });
-  } else {
-    studentAttendance = {};
   }
   return data;
 }
@@ -157,9 +133,7 @@ async function fetchAttendance(code) {
 /* ===== Fetch video list ===== */
 async function fetchVideoList() {
   const resp = await fetch(VIDEO_LIST_API, { credentials: 'omit', redirect: 'follow' });
-  const data = await resp.json();
-  allVideos = Array.isArray(data) ? data : [];
-  return allVideos;
+  allVideos = await resp.json();
 }
 
 /* ===== Render homework video cards filtered by attendance ===== */
@@ -173,12 +147,11 @@ function renderHomeworkCards() {
 
   // Filter videos by index: item 0 → attendance index 0 (الحضور الاول), item 1 → index 1, etc.
   // Titles are Arabic like "واجب المحاضرة الاولي", so we use array position, not title parsing.
-  const availableVideos = [];
+    const availableVideos = [];
   allVideos.forEach((v, i) => {
-    const pageName = String(v.pageName || 'video' + (i + 1)).trim();
-    const hasAccess = studentAttendance[pageName] === true || studentAttendance[i] === true || studentAttendance[String(i + 1)] === true;
-    if (!hasAccess) return;
+    if (studentAttendance[i] !== true) return;
 
+    // Skip empty/placeholder rows or items without meaningful data
     const hasContent = v && (
       (v.title && String(v.title).trim()) ||
       (v.imgSrc && String(v.imgSrc).trim()) ||
@@ -186,7 +159,7 @@ function renderHomeworkCards() {
     );
     if (!hasContent) return;
 
-    availableVideos.push({ ...v, _index: i, pageName });
+    availableVideos.push({ ...v, _index: i }); // store original index
   });
 
   if (availableVideos.length === 0) {
@@ -196,8 +169,8 @@ function renderHomeworkCards() {
 
   grid.innerHTML = '';
   availableVideos.forEach((video, idx) => {
-    const lectureNum = video._index + 1;
-    const pageName = String(video.pageName || 'video' + lectureNum).trim();
+    const lectureNum = video._index + 1; // 1-based lecture number
+    const pageName = 'video' + lectureNum;  // "video1", "video2", etc.
     const card = document.createElement('div');
     card.className = 'content-card';
     card.style.animationDelay = `${idx * 0.1}s`;
@@ -224,7 +197,44 @@ function renderHomeworkCards() {
     `;
     grid.appendChild(card);
   });
-  refreshHomeworkLanguage();
+  // Prefetch links for available videos in background to reduce wait when user clicks
+  try {
+    const pageNames = availableVideos.map(v => 'video' + (v._index + 1));
+    // don't await - run in background
+    prefetchVideoLinks(pageNames);
+  } catch (e) {}
+  updateLanguage();
+}
+
+// Prefetch video links for a list of page names with limited concurrency
+function prefetchVideoLinks(pageNames) {
+  if (!Array.isArray(pageNames) || pageNames.length === 0) return;
+  const concurrency = 3;
+  const queue = pageNames.slice();
+
+  async function worker() {
+    while (queue.length) {
+      const pageName = queue.shift();
+      if (!pageName) break;
+      if (videoLinksCache[pageName]) continue; // already cached
+      try {
+        const resp = await fetch(`${VIDEO_LINKS_API}?pageName=${encodeURIComponent(pageName)}`, { credentials: 'omit', redirect: 'follow' });
+        if (!resp.ok) continue;
+        const links = await resp.json();
+        // store only non-empty links to avoid overwriting good cache with empty
+        if (links && (links.drive || links.pcloud || links.mega)) {
+          videoLinksCache[pageName] = links;
+        }
+      } catch (err) {
+        // ignore individual failures
+      }
+      // small delay between requests to be polite
+      await new Promise(r => setTimeout(r, 200));
+    }
+  }
+
+  // launch workers (no await)
+  for (let i = 0; i < concurrency; i++) worker();
 }
 
 /* ===== Load video links then show source picker ===== */
@@ -321,4 +331,3 @@ function closeVideoPlayer() {
   document.getElementById('homeworkList').style.display = 'block';
   document.getElementById('videoWrapper').innerHTML = '';
 }
-
