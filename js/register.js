@@ -99,9 +99,9 @@ function startScanner() {
 
             const numericCode = parseInt(code, 10);
 
-            // Accept only 3000 - 3100
-            if (numericCode < 3000 || numericCode > 3100) {
-                showToast('كود غير صالح - يجب أن يكون من 3000 إلى 3100', 'error');
+            // Accept only 30000 - 32000
+            if (numericCode < 30000 || numericCode > 32000) {
+                showToast('كود غير صالح, 'error');
                 return;
             }
 
