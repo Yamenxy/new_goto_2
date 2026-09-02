@@ -101,7 +101,7 @@ function startScanner() {
 
             // Accept only 30000 - 32000
             if (numericCode < 30000 || numericCode > 32000) {
-                showToast('كود غير صالح, 'error');
+                showToast('كود غير صالح', 'error');
                 return;
             }
 
